@@ -1073,7 +1073,7 @@
 
             // WordPress API with category filtering for language
             const categoryIds = LANG_CATEGORIES[currentLang].join(',');
-            const apiUrl = `${WP_API_BASE}/posts?_embed&per_page=50&categories=${categoryIds}`;
+            const apiUrl = `${WP_API_BASE}/posts?_embed&per_page=50&categories=${categoryIds}&orderby=date&order=desc`;
 
             try {
                 const response = await fetch(apiUrl);
