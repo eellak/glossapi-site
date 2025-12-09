@@ -1,0 +1,1078 @@
+:root {
+  /* Cool indigo palette */
+  --primary: #2C46A4;            /* main */
+  --primary-light: #2C46A4;
+  --primary-lighter: #2C46A4;
+  --primary-dark: #2C46A4;
+  --primary-rgb: 44, 70, 164;
+  --primary-dark-rgb: 44, 70, 164;
+  --text-dark: #333333;
+  --text-light: #666666;
+  --background: #F0EEE6; /* Soft parchment tone matching ASCII background */
+  --background-alt: #F9FAFB;
+  --border: #E5E7EB;
+  --shadow: rgba(0, 0, 0, 0.05);
+  --radius: 8px;
+  --transition: all 0.3s ease;
+}
+
+/* ===============================================================
+   Alternative Theme Palettes (set on <html data-theme="...">) 
+   To try: set data-theme attribute to one of these keys: 
+   charcoal, emerald, indigo
+   =============================================================== */
+
+[data-theme="charcoal"] {
+  --primary: #2E2E2E; /* rich charcoal */
+  --primary-light: #505050;
+  --primary-lighter: #6B6B6B;
+  --primary-dark: #1C1C1C;
+  --text-dark: #2E2E2E;
+  --text-light: #6F6F6F;
+  --background: #FFFFFF;
+  --background-alt: #F5F6F7;
+  --primary-rgb: 46, 46, 46;
+  --primary-dark-rgb: 24, 24, 24;
+}
+
+[data-theme="emerald"] {
+  --primary: #146C60; /* emerald */
+  --primary-light: #20907F;
+  --primary-lighter: #39B3A0;
+  --primary-dark: #0E4A43;
+  --text-dark: #1E2A2B;
+  --text-light: #6A7C7B;
+  --background: #F3F8F7;
+  --background-alt: #E7EFED;
+  --primary-rgb: 20, 108, 96;
+  --primary-dark-rgb: 14, 74, 67;
+}
+
+[data-theme="indigo"] {
+  --primary: #4636D6; /* vibrant indigo */
+  --primary-light: #5B4BE8;
+  --primary-lighter: #7B6EFA;
+  --primary-dark: #3425B8;
+  --text-dark: #2B2B38;
+  --text-light: #78788C;
+  --background: #FAFBFF;
+  --background-alt: #EEF0FF;
+  --primary-rgb: 70, 54, 214;
+  --primary-dark-rgb: 52, 37, 184;
+}
+
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Universal heading colour tied to theme */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary);
+}
+
+/* Background Animation - With Blur Effect */
+.background-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Floating orange circles - these will be very visible */
+.orange-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, 
+                  rgba(var(--primary-rgb), 0.45) 0%, 
+                  rgba(var(--primary-rgb), 0.25) 70%);
+  filter: blur(30px);
+  opacity: 0.6;
+  will-change: transform, opacity;
+  transition: transform 0.5s ease-out;
+}
+
+/* Wavy mesh pattern */
+.background-mesh {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: 
+    repeating-linear-gradient(45deg, 
+      rgba(var(--primary-rgb), 0.04) 0, 
+      rgba(var(--primary-rgb), 0.04) 1px, 
+      transparent 1px, 
+      transparent 15px
+    );
+  opacity: 0.5;
+  animation: meshWave 25s infinite ease-in-out;
+}
+
+/* Bold diagonal accent line */
+.diagonal-line {
+  position: absolute;
+  width: 150vw;
+  height: 1.5px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(var(--primary-rgb), 0.2) 30%, 
+    rgba(var(--primary-dark-rgb), 0.3) 50%, 
+    rgba(var(--primary-rgb), 0.2) 70%, 
+    transparent 100%);
+  transform: rotate(-35deg) translateX(-50%) translateY(30vh);
+  transform-origin: center;
+  animation: lineShift 30s infinite alternate ease-in-out;
+}
+
+/* Vibrant Circle Animation with enhanced movements */
+@keyframes floatingcircle {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.45;
+  }
+  25% {
+    transform: translate(25px, -20px) scale(1.08);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(18px, 22px) scale(0.96);
+    opacity: 0.55;
+  }
+  75% {
+    transform: translate(-20px, -15px) scale(0.92);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.45;
+  }
+}
+
+/* Vibrant Bar Animation with enhanced movements */
+@keyframes floatingbar {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.42;
+  }
+  25% {
+    transform: translate(20px, -20px) rotate(2deg);
+    opacity: 0.47;
+  }
+  50% {
+    transform: translate(25px, 15px) rotate(1deg);
+    opacity: 0.52;
+  }
+  75% {
+    transform: translate(-15px, -8px) rotate(-2deg);
+    opacity: 0.47;
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.42;
+  }
+}
+
+/* Vibrant Dot Animation with enhanced movements */
+@keyframes floatingdot {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.48;
+  }
+  25% {
+    transform: translate(12px, -15px);
+    opacity: 0.52;
+  }
+  50% {
+    transform: translate(18px, 10px);
+    opacity: 0.58;
+  }
+  75% {
+    transform: translate(-14px, -8px);
+    opacity: 0.52;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.48;
+  }
+}
+
+/* Mesh wave animation */
+@keyframes meshWave {
+  0% {
+    transform: scale(1) skew(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1) skew(2deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0.95) skew(-1deg);
+    opacity: 0.4;
+  }
+}
+
+/* Line shift animation */
+@keyframes lineShift {
+  0% {
+    transform: rotate(-35deg) translateX(-50%) translateY(30vh);
+    opacity: 0.3;
+  }
+  50% {
+    transform: rotate(-33deg) translateX(-45%) translateY(35vh);
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotate(-38deg) translateX(-55%) translateY(25vh);
+    opacity: 0.4;
+  }
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  line-height: 1.5;
+  background-color: transparent;
+}
+
+/* Make app container properly layered for background visibility */
+.app {
+  position: relative;
+  z-index: 1;
+  opacity: 0; /* hide initially, visibility handled via JS */
+  transition: opacity 1.8s ease;
+}
+
+/* Header maintains minimal background for readability, other sections transparent */
+.header {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
+/* Make all content sections completely transparent except header */
+.hero,
+.hero .container,
+.what-is,
+.what-is .container,
+.team,
+.team .container,
+.community,
+.community .container,
+.footer,
+.footer .container {
+  position: relative;
+  background-color: transparent !important;
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* Layout */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  padding: 1.5rem 0;
+  border-bottom: none;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  transition: var(--transition);
+}
+
+.logo-img {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  filter: grayscale(100%);
+  opacity: 0.8;
+  transition: var(--transition);
+}
+
+.logo-box:hover .logo-img {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.logo-box:hover {
+  color: var(--primary-dark);
+}
+
+.nav-list {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.nav-link:hover {
+  color: var(--primary);
+}
+
+/* Color transition animation for Team link from gray to orange */
+@keyframes colorTransition {
+  0% { color: var(--text-light); }
+  50% { color: var(--primary); }
+  100% { color: var(--text-light); }
+}
+
+.nav-item:nth-child(3) .nav-link {
+  position: relative;
+  color: var(--text-light);
+  animation: colorTransition 3s ease-in-out infinite;
+  transition: color 0.3s ease;
+}
+
+.nav-item:nth-child(3) .nav-link:hover {
+  color: var(--primary);
+  animation-play-state: paused;
+}
+
+.nav-link.documentation {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.nav-link.documentation:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Hero Section - Completely transparent */
+.hero {
+  text-align: center;
+  padding: 5rem 0;
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-shadow:
+      0 0 6px rgba(255,255,255,0.9),
+      0 0 14px rgba(255,255,255,0.8),
+      0 0 26px rgba(255,255,255,0.6);
+  /* subtle light backdrop */
+  background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%);
+  -webkit-background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-dark);
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8); /* Add shadow for visibility */
+  font-weight: 500; /* Make slightly bolder */
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-lighter);
+  transform: translateY(-2px);
+}
+
+/* Sections */
+.section-title {
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Removed the decorative line under section titles */
+.section-title::after {
+  display: none;
+}
+
+.section-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Make About section paragraph text readable against animation */
+.what-is .section-content p {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  color: var(--text-dark);
+  font-weight: 500;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.section-content p {
+  margin-bottom: 1.5rem;
+  color: var(--text-light);
+}
+
+/* What Is Section */
+.what-is {
+  padding: 5rem 0;
+  background-color: var(--background-alt);
+}
+
+/* Team Section */
+.team {
+  padding: 5rem 0;
+  background-color: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
+.team-members {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.team-member {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  /* Restore the themed border and combine with a subtle inner border */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.6), /* Outer themed ring */
+              0 10px 25px rgba(0, 0, 0, 0.1);      /* Main shadow */
+  padding: 2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.team-member:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.8), /* Brighter ring on hover */
+              0 15px 30px rgba(0, 0, 0, 0.15);     /* Enhanced shadow on hover */
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.team-member.active {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.team-member-info {
+  position: relative;
+  z-index: 1; /* above wave canvas */
+  width: 100%;
+}
+
+.team-member-name {
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-shadow:
+      0 0 6px rgba(255,255,255,0.9),
+      0 0 14px rgba(255,255,255,0.8),
+      0 0 26px rgba(255,255,255,0.6);
+  background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%);
+  -webkit-background-clip: text;
+}
+
+.team-member-title {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.team-member-details {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 0;
+}
+
+.team-member.active .team-member-details {
+  height: auto;
+  opacity: 1;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(var(--primary-rgb), 0.2);
+}
+
+.team-member-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.skill-tag {
+  background-color: rgba(var(--primary-rgb), 0.15);
+  color: var(--primary-dark);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.team-member-cv {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.team-member-cv:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.team-member-photo {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--background-alt);
+}
+
+.team-member-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-member-role {
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.team-member-bio {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.team-member-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.team-member-link {
+  padding: 0.4rem 1rem;
+  background-color: var(--background-alt);
+  color: var(--text-dark);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.team-member-link:hover {
+  background-color: var(--primary-lighter);
+  color: var(--primary-dark);
+}
+
+/* Responsive Team Section */
+@media (max-width: 768px) {
+  .team-member {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .team-member-links {
+    justify-content: center;
+  }
+}
+
+/* Community Section */
+.community {
+  padding: 5rem 0;
+  background-color: var(--background);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.card {
+  background-color: var(--primary); /* bold indigo */
+  /* Add a subtle braille-like dot pattern */
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
+  background-size: 9px 9px;
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: 0 8px 18px rgba(var(--primary-rgb), 0.4);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  text-align: center;
+  color: #fff;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 22px rgba(var(--primary-rgb), 0.5);
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(255,255,255,0.15);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.card-description {
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 1.5rem;
+  min-height: 3rem;
+}
+
+.card-link {
+  color: #ffffff;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.card-link:hover {
+  color: var(--primary-lighter);
+}
+
+.external-icon {
+  margin-left: 0.25rem;
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  padding: 2rem 0;
+  background-color: transparent;
+  text-align: center;
+  color: var(--text-dark);
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+  border-top: none;
+}
+
+/* Terminal - macOS Style - Light & Transparent */
+.terminal-box {
+  width: 100%;
+  max-width: 700px;
+  background-color: rgba(255, 255, 255, 0.7); /* Copied from .header */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  margin: 2.5rem auto 0;
+  opacity: 0;
+  transform: translateY(-25px);
+  transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+  font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.terminal-box.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.1); /* Slightly more transparent than body for layering */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+}
+
+.terminal-controls {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.terminal-control.close {
+  background-color: #ff5f57;
+}
+
+.terminal-control.minimize {
+  background-color: #ffbd2e;
+}
+
+.terminal-control.maximize {
+  background-color: #28ca42;
+}
+
+.terminal-control:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.terminal-title {
+  color: #343a40; /* Darker title */
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+}
+
+.terminal-content {
+  padding: 16px 20px;
+  min-height: 200px;
+  font-size: 14px;
+  line-height: 1.6; /* Increased for spacing */
+  color: #343a40; /* Darker text for better readability */
+  overflow-y: auto;
+  background-color: transparent !important; /* Ensure content area is always transparent */
+  font-weight: 500;
+  text-shadow: none; /* Removed text shadow to fix the "overlay" issue */
+  transition: none; /* Explicitly disable any inherited transitions */
+}
+
+.terminal-line {
+  margin-bottom: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  white-space: pre-wrap;
+  font-family: inherit;
+  color: #495057;
+  font-weight: 500;
+}
+
+.terminal-user {
+  /* No longer used, but kept for consistency */
+  color: #495057;
+  font-weight: 500;
+}
+
+.terminal-tilde {
+  /* No longer used */
+  color: #495057;
+  margin: 0 2px;
+}
+
+.terminal-path {
+  color: #6d6b9f; /* Muted indigo for a closer match */
+  font-weight: 500;
+}
+
+.terminal-dollar {
+  color: #495057; /* Dark grey */
+  margin-right: 8px;
+  line-height: 1.5;
+}
+
+.terminal-command {
+  color: #343a40; /* Darker text */
+  font-weight: 500;
+}
+
+.terminal-output-container {
+  margin-top: 10px; /* Space between command and output */
+  line-height: 1.5;
+}
+
+.terminal-output-line {
+  margin-bottom: 3px;
+  font-size: 14px;
+  color: #495057; /* Darker grey for output */
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.terminal-output-line.info {
+  color: #495057; /* Darker grey */
+}
+
+.terminal-output-line.success {
+  color: #2a9d8f; /* Muted, professional green */
+  font-weight: 600;
+}
+
+.terminal-output-line.warning {
+  color: #e5c07b;
+}
+
+.terminal-output-line.muted {
+  color: #868e96; /* Darkened for better readability */
+}
+
+/* Progress bar styles */
+.progress-container {
+  margin: 10px 0;
+  font-family: inherit;
+  font-size: 14px;
+  color: #495057;
+  display: block; /* Make it visible */
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: #495057;
+}
+
+.progress-bar-container {
+  height: 4px;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+  transition: width 0.1s linear;
+  border-radius: 2px;
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  color: #868e96;
+  font-size: 13px;
+}
+
+#progress-speed {
+  color: #495057;
+}
+
+/* macOS cursor - solid dark */
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 17px;
+  background-color: rgba(0, 0, 0, 0.04);
+  margin-left: 2px;
+  animation: terminalBlink 1.2s infinite;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+}
+
+@keyframes terminalBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.terminal-footer {
+  padding: 10px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.1); /* Match header's child elements */
+  display: flex;
+  justify-content: flex-end;
+}
+
+.terminal-copy-btn {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #6c757d;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.terminal-copy-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.terminal-copy-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #343a40;
+}
+
+.terminal-copy-btn:active {
+  transform: translateY(0);
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.copy-success {
+  background-color: var(--primary) !important;
+  border-color: var(--primary-dark) !important;
+  color: #ffffff !important;
+}
+
+.copy-failed {
+  background-color: rgba(224, 108, 117, 0.15) !important;
+  border-color: rgba(224, 108, 117, 0.4) !important;
+  color: #e06c75 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-list {
+    margin-top: 1rem;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+}
+
+.team-member::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center,
+      rgba(255,255,255,0.6) 0%,
+      rgba(255,255,255,0) 70%);
+  pointer-events: none;   /* let clicks through */
+  mix-blend-mode: screen; /* subtle lightening */
+}

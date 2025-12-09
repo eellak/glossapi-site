@@ -1,0 +1,14 @@
+{
+  "name": "glossapi-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "glossAPI official website",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vite": "^5.0.0"
+  }
+}
