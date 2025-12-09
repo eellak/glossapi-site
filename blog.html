@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - GlossAPI</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        gloss: {
+                            bg: '#030005',
+                            purple: '#8b5cf6',
+                            neon: '#d8b4fe',
+                        }
+                    },
+                    animation: {
+                        'blink': 'blink 1s step-end infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                        'nav-pulse': 'navPulse 4s infinite alternate',
+                        'reverse-ping': 'reversePing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'spin-slow': 'spin 6s linear infinite',
+                        'flow': 'flow 2s linear infinite',
+                        'flow-vertical': 'flowVertical 2s linear infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 10px rgba(139, 92, 246, 0.2)' },
+                            '50%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.6)' },
+                        },
+                        navPulse: {
+                            '0%': { borderColor: 'rgba(139, 92, 246, 0.3)', boxShadow: '0 0 10px rgba(139, 92, 246, 0.1)' },
+                            '100%': { borderColor: 'rgba(139, 92, 246, 0.6)', boxShadow: '0 0 25px rgba(139, 92, 246, 0.2)' },
+                        },
+                        reversePing: {
+                            '0%': { transform: 'scale(1.8)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '0.8' },
+                        },
+                        pulseActive: {
+                            '0%': { borderColor: 'rgba(139, 92, 246, 0.5)', boxShadow: '0 0 30px rgba(139, 92, 246, 0.3), 0 12px 40px rgba(139, 92, 246, 0.15)' },
+                            '15%': { borderColor: 'rgba(139, 92, 246, 1)', boxShadow: '0 0 50px rgba(139, 92, 246, 0.5), 0 16px 60px rgba(139, 92, 246, 0.25)' },
+                            '30%': { borderColor: 'rgba(139, 92, 246, 0.5)', boxShadow: '0 0 30px rgba(139, 92, 246, 0.3), 0 12px 40px rgba(139, 92, 246, 0.15)' },
+                            '45%': { borderColor: 'rgba(139, 92, 246, 1)', boxShadow: '0 0 50px rgba(139, 92, 246, 0.5), 0 16px 60px rgba(139, 92, 246, 0.25)' },
+                            '100%': { borderColor: 'rgba(139, 92, 246, 0.5)', boxShadow: '0 0 30px rgba(139, 92, 246, 0.3), 0 12px 40px rgba(139, 92, 246, 0.15)' },
+                        },
+                        flow: {
+                            '0%': { backgroundPosition: '200% 0' },
+                            '100%': { backgroundPosition: '-200% 0' },
+                        },
+                        flowVertical: {
+                            '0%': { backgroundPosition: '0 200%' },
+                            '100%': { backgroundPosition: '0 -200%' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #1a1625;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .view-section.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .glass-box {
+            background: rgba(13, 8, 20, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+            /* overflow: hidden;  <-- Removed to allow pulse out */
+        }
+
+        /* Ensure pseudo-elements stay within the padding area for the "inner outline" effect if needed, 
+           or shine through if we want that. 
+           With p-[5px] and inner div bg, the gap is clear. */
+
+        .glass-box:hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* This general rule will be overridden by specific ID/class rules for shine size/masking */
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.25), transparent 40%);
+            z-index: -1;
+            opacity: 1;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            transition-duration: 0s;
+            border-radius: inherit;
+            /* Fixes shine bleed */
+        }
+
+        .glass-box.active-dataset {
+            border-width: 1px;
+            /* Pulse handled by ::after */
+        }
+
+        .glass-box.active-dataset::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            /* Static Outline Color */
+            border: 2px solid rgba(var(--pulse-color), 1);
+            /* Highlight Shine */
+            box-shadow: 0 0 15px rgba(var(--pulse-color), 0.6);
+            z-index: -2;
+            animation: simplePulse 2s infinite;
+            /* Simple pulsing */
+            pointer-events: none;
+            opacity: 1;
+        }
+
+        @keyframes simplePulse {
+            0% {
+                inset: 0px;
+                opacity: 1;
+            }
+
+            100% {
+                inset: -8px;
+                /* Consistent expansion */
+                opacity: 0;
+                border-width: 0px;
+                /* Fade out border thickness */
+            }
+        }
+
+        /* Theme-specific Pulse Colors */
+        /* Note: border-color is now handled via var(--pulse-color) in the main rule above */
+        /* Removing explicit border-color overrides to rely on the variable */
+
+
+        @keyframes modernPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+                filter: blur(0px);
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: scale(1.1);
+                /* Subtle but noticeable expansion */
+                opacity: 0;
+                filter: blur(4px);
+                /* Fade out with blur for "ethereal" feel */
+            }
+        }
+
+
+
+        .glass-box.active-dataset:hover::before {
+            opacity: 1;
+            /* Ensure full opacity on hover */
+        }
+
+        /* Small Shine Variant for Buttons (Updated) */
+        .glass-box.small-shine::before {
+            z-index: -1 !important;
+            background: radial-gradient(300px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.6), transparent 40%);
+            padding: 3px;
+            /* Match inner outline */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .glass-box.small-shine:hover::before {
+            opacity: 1;
+        }
+
+        .glass-box.small-shine>div {
+            z-index: 1;
+            position: relative;
+            background-color: rgba(13, 8, 20, 0.5);
+            /* Consistent Opacity */
+            backdrop-filter: blur(10px);
+        }
+
+        /* Specific Shine Control for 3 Steps, Team Containers, Graph, and Datasets (Inner Outline Only) */
+        #pipeline-container::before,
+        #team .glass-box.rounded-3xl::before,
+        #graph-container::before,
+        #graph-container::before,
+        .glass-box.active-dataset::before,
+        .glass-box.article-card::before,
+        .glass-box.featured-article-card::before,
+        .glass-box[data-theme]::before {
+            z-index: -1 !important;
+            /* Uniform shine size and color for consistent look */
+            background: radial-gradient(var(--shine-size, 2000px) circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.3), transparent 40%);
+            /* Mask shine to only appear in the padding area (5px inner outline) */
+            padding: 5px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Variable shine sizes per container type if needed */
+        #pipeline-container::before {
+            --shine-size: 2000px;
+        }
+
+        #team .glass-box.rounded-3xl::before {
+            --shine-size: 2000px;
+        }
+
+        #graph-container::before {
+            --shine-size: 800px;
+        }
+
+        .glass-box[data-theme]::before {
+            --shine-size: 600px;
+        }
+
+        /* Ensure Inner Content masks the shine */
+        #pipeline-container>div,
+        #team .glass-box.rounded-3xl>div,
+        #graph-container>div,
+        .glass-box[data-theme]>div {
+            z-index: 1;
+            /* Above pseudo-element shine */
+            position: relative;
+            background-color: rgba(13, 8, 20, 0.5);
+            /* Increased Opacity */
+            backdrop-filter: blur(10px);
+        }
+
+        /* Revised Dataset Animation: 
+           1. Constant Outline (always visible)
+           2. Highlight Shine (always visible)
+           3. Pulsing Outline (thicker, expands like export step)
+        */
+
+        .glass-box.active-dataset {
+            /* 1. Constant Outline */
+            border-color: rgba(var(--pulse-color), 1) !important;
+            border-width: 1px;
+            /* 2. Highlight Shine (Inner Glow) */
+            box-shadow: 0 0 20px rgba(var(--pulse-color), 0.4), inset 0 0 20px rgba(var(--pulse-color), 0.2);
+        }
+
+        .glass-box.active-dataset::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            /* 3. Pulsing Outline - Thicker */
+            border: 3px solid rgba(var(--pulse-color), 0.6);
+            opacity: 0;
+            z-index: -2;
+            animation: exportPulse 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes exportPulse {
+            0% {
+                inset: 0px;
+                opacity: 0;
+                border-width: 3px;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            100% {
+                inset: -12px;
+                /* Expand outwards significantly */
+                opacity: 0;
+                border-width: 0px;
+                /* Thin out as it expands */
+            }
+        }
+
+        /* Ensure shine shows on hover */
+        #pipeline-container:hover::before,
+        #team .glass-box.rounded-3xl:hover::before,
+        #graph-container:hover::before,
+        .glass-box[data-theme]:hover::before,
+        .glass-box.active-dataset::before,
+        .glass-box.article-card:hover::before,
+        .glass-box.featured-article-card:hover::before,
+        .glass-box.social-btn:hover::before {
+            opacity: 1;
+        }
+
+        /* Team Container Hover Outline */
+        #team .glass-box.rounded-3xl,
+        #graph-container {
+            transition: border-color 0.3s ease;
+        }
+
+        #team .glass-box.rounded-3xl:hover,
+        #graph-container:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        /* Theme-specific Active States - Potent Overrides with Animation */
+        .glass-box[data-theme="purple"].active-dataset {
+            --pulse-color: 139, 92, 246;
+        }
+
+        .glass-box[data-theme="blue"].active-dataset {
+            --pulse-color: 59, 130, 246;
+        }
+
+        .glass-box[data-theme="green"].active-dataset {
+            --pulse-color: 34, 197, 94;
+        }
+
+        .glass-box[data-theme="pink"].active-dataset {
+            --pulse-color: 236, 72, 153;
+        }
+
+        .glass-box[data-theme="cyan"].active-dataset {
+            --pulse-color: 6, 182, 212;
+        }
+
+        .glass-box[data-theme="purple"].active-dataset h3 {
+            color: #d8b4fe;
+        }
+
+        .glass-box[data-theme="blue"].active-dataset h3 {
+            color: #93c5fd;
+        }
+
+        .glass-box[data-theme="green"].active-dataset h3 {
+            color: #86efac;
+        }
+
+        .glass-box[data-theme="pink"].active-dataset h3 {
+            color: #f9a8d4;
+        }
+
+        .glass-box[data-theme="cyan"].active-dataset h3 {
+            color: #67e8f9;
+        }
+
+        .floating-nav {
+            background: rgba(13, 8, 20, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .floating-nav:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+        }
+
+        .floating-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.25), transparent 40%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .floating-nav:hover::before {
+            opacity: 1;
+            transition-duration: 0s;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #d8b4fe 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .circled-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .circled-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 130%;
+            height: 140%;
+            transform: translate(-50%, -50%) rotate(-3deg);
+            border: 2px solid rgba(139, 92, 246, 0.8);
+            border-radius: 50% 70% 50% 70% / 60% 80% 60% 80%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .underlined-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .underlined-text::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -5%;
+            width: 110%;
+            height: 0.3em;
+            border-bottom: 3px solid rgba(139, 92, 246, 0.8);
+            border-radius: 40% 60% 40% 60% / 100%;
+            /* Slight irregularity */
+            transform: rotate(-1.5deg);
+            pointer-events: none;
+        }
+
+        .terminal-window {
+            background: #0f0b15;
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: #1a1625;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            color: #a9b7c6;
+            font-size: 0.9rem;
+            min-height: 200px;
+        }
+
+        .cmd-line {
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        .prompt {
+            color: #8b5cf6;
+            margin-right: 10px;
+        }
+
+        .output-line {
+            color: #ccc;
+            margin-bottom: 2px;
+        }
+
+        .success-text {
+            color: #4ade80;
+        }
+
+        .info-text {
+            color: #60a5fa;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            margin: 5px 0 15px 0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #d8b4fe;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link.active {
+            color: white;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #a855f7;
+            box-shadow: 0 0 8px #a855f7;
+            border-radius: 2px;
+        }
+
+        /* Timeline Styles */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(139, 92, 246, 0.5), transparent);
+            transform: translateX(-50%);
+        }
+
+        .timeline-node {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #030005;
+            border: 2px solid #8b5cf6;
+            border-radius: 50%;
+            top: 24px;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            transition: all 0.3s;
+        }
+
+        /* Specific positioning for alternating nodes */
+        .timeline-node.node-left {
+            right: -8px;
+        }
+
+        .timeline-node.node-right {
+            left: -8px;
+        }
+
+        .timeline-node.active-node {
+            background: #d8b4fe;
+            box-shadow: 0 0 20px rgba(216, 180, 254, 0.8);
+            transform: scale(1.3);
+            border-color: white;
+        }
+
+        .team-social-link {
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .team-social-link:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            color: #d8b4fe;
+        }
+
+        /* Responsive stacking for 1:1 aspect ratio or portrait */
+        @media (max-aspect-ratio: 1/1) {
+            .roadmap-container {
+                flex-direction: column-reverse !important;
+            }
+
+            .roadmap-container>div {
+                width: 100% !important;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d0a14;
+            margin-inline: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            ::-webkit-scrollbar-track {
+                margin-inline: 3rem;
+            }
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c084fc;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-purple-500 selection:text-white">
+
+    <!-- Global Background 3D Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation Wrapper -->
+    <div class="fixed w-full z-50 top-6 px-4">
+        <div class="max-w-7xl mx-auto relative">
+            <!-- Main Nav Bar -->
+            <div id="main-nav" class="floating-nav p-[5px] relative z-20 rounded-3xl group/nav">
+                <div class="w-full h-full bg-[#0d0814]/60 rounded-[1.2rem] px-6 py-3 flex justify-between items-center">
+
+                    <!-- 1. Logos (Center Mobile / Left Desktop) -->
+                    <div
+                        class="flex items-center gap-4 z-20 order-2 md:order-1 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
+                        <!-- GFOSS Logo -->
+                        <a href="https://eellak.ellak.gr/" target="_blank"
+                            class="relative block h-8 w-auto flex-shrink-0">
+                            <img src="assets/gfoss_white.svg" alt="GFOSS"
+                                class="h-full w-auto transition-opacity duration-300 group-hover/nav:opacity-0">
+                            <img src="assets/gfoss.svg" alt="GFOSS"
+                                class="absolute inset-0 h-full w-auto transition-opacity duration-300 opacity-0 group-hover/nav:opacity-100">
+                        </a>
+
+                        <!-- Separator -->
+                        <div class="h-4 w-[1px] bg-white/20"></div>
+
+                        <!-- GlossAPI Logo -->
+                        <a href="index.html"
+                            class="flex items-center h-6 w-auto flex-shrink-0 hover:opacity-80 transition-opacity mt-0.5">
+                            <img src="assets/glossapi_white.svg" alt="GlossAPI" class="h-4/5 w-auto">
+                        </a>
+                    </div>
+
+                    <!-- Mobile Menu Button (Left) -->
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()"
+                        class="md:hidden z-20 order-1 text-white p-1 focus:outline-none flex items-center justify-center h-8 w-8">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- 2. Menu Items (Desktop Only - Centered) -->
+                    <div
+                        class="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest font-display text-gray-400 z-20 order-2 absolute left-1/2 -translate-x-1/2">
+                        <a href="index.html" id="nav-home"
+                            class="nav-link cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 uppercase">Αρχικη</a>
+                        <a href="blog.html" id="nav-blog"
+                            class="nav-link active hover:text-white transition-colors flex items-center gap-2">
+                            <span id="nav-blog-text">Blog</span>
+                            <span id="nav-new-badge"
+                                class="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/30 font-bold uppercase">Νεο</span>
+                        </a>
+                    </div>
+
+                    <!-- 3. Language Toggle (Right) -->
+                    <div class="z-20 order-3 hidden md:flex items-center gap-2">
+                        <button onclick="toggleLanguage('en')" id="lang-en"
+                            class="text-sm font-bold px-2 py-1 rounded transition-colors text-gray-500 hover:text-white">EN</button>
+                        <div class="w-[1px] h-3 bg-gray-600"></div>
+                        <button onclick="toggleLanguage('el')" id="lang-el"
+                            class="text-sm font-bold px-2 py-1 rounded transition-colors text-purple-400">EL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 z-[60] bg-[#0d0814]/95 backdrop-blur-xl hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300">
+        <!-- Close Button -->
+        <button onclick="toggleMobileMenu()"
+            class="absolute top-8 right-8 text-white/60 hover:text-white transition-colors">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+
+        <!-- Menu Items -->
+        <div
+            class="flex flex-col items-center gap-8 text-2xl font-bold uppercase tracking-widest font-display text-gray-400">
+            <a href="index.html" onclick="toggleMobileMenu()" id="mobile-nav-home"
+                class="nav-link cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 uppercase">Αρχικη</a>
+            <a href="blog.html" id="mobile-nav-blog"
+                class="nav-link active hover:text-white transition-colors flex items-center gap-2">
+                <span id="mobile-nav-blog-text">Blog</span>
+                <span id="mobile-nav-new-badge"
+                    class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30 font-bold uppercase">Νεο</span>
+            </a>
+
+            <!-- Mobile Language Toggle -->
+            <div class="flex items-center gap-4 mt-4">
+                <button onclick="toggleLanguage('en'); toggleMobileMenu()" id="mobile-lang-en"
+                    class="text-xl font-bold px-3 py-2 rounded transition-colors text-gray-500 hover:text-white">EN</button>
+                <div class="w-[1px] h-6 bg-gray-600"></div>
+                <button onclick="toggleLanguage('el'); toggleMobileMenu()" id="mobile-lang-el"
+                    class="text-xl font-bold px-3 py-2 rounded transition-colors text-purple-400">EL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="relative z-10 pt-40 pb-20 px-4 sm:px-6 min-h-screen">
+
+        <div id="blog-container" class="w-full">
+
+            <div class="max-w-6xl mx-auto">
+                <!-- Blog Header Removed -->
+
+                <!-- Articles Container -->
+                <div id="articles-wrapper">
+                    <!-- Content injected via API -->
+                    <div class="flex justify-center items-center py-20">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-white/10 py-8 mt-12 relative z-10"
+        style="background: rgba(13, 8, 20, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-gray-500 text-sm">
+                &copy; 2024 GlossAPI. Licensed under the EUPL v1.2.
+            </div>
+            <div class="flex items-center gap-6 mt-4 md:mt-0">
+                <a href="https://discord.gg/TY69npdMwM" target="_blank"
+                    class="text-gray-400 hover:text-[#5865F2] transition-colors">
+                    <div style="width: 20px; height: 20px;">
+                        <img src="assets/discord_white.svg"
+                            class="w-full h-full opacity-60 hover:opacity-100 transition-opacity" alt="Discord">
+                    </div>
+                </a>
+                <a href="https://huggingface.co/datasets/glossAPI" target="_blank"
+                    class="text-gray-400 hover:text-yellow-500 transition-colors">
+                    <div style="width: 25px; height: 25px;">
+                        <img src="assets/huggingface_white.svg"
+                            class="w-full h-full opacity-60 hover:opacity-100 transition-opacity" alt="HF">
+                    </div>
+                </a>
+                <a href="https://github.com/eellak/glossAPI" target="_blank"
+                    class="text-gray-400 hover:text-white transition-colors">
+                    <div style="width: 18px; height: 18px;">
+                        <img src="assets/github.svg"
+                            class="w-full h-full opacity-60 hover:opacity-100 transition-opacity" alt="GitHub">
+                    </div>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 1. Background Scene (Global) -->
+    <script>
+        const canvasBg = document.getElementById('bg-canvas');
+        const sceneBg = new THREE.Scene();
+        sceneBg.fog = new THREE.Fog(0x1a1625, 10, 60);
+
+        const cameraBg = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        cameraBg.position.z = 20;
+
+        const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, antialias: true, alpha: true });
+        rendererBg.setSize(window.innerWidth, window.innerHeight);
+        rendererBg.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+
+
+        // --- Floating Particles ---
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 20000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            if (i % 3 === 1) { // Y axis
+                posArray[i] = (Math.random() - 0.5) * 250;
+            } else {
+                posArray[i] = (Math.random() - 0.5) * 60;
+            }
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0x8b5cf6, // Purple
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        sceneBg.add(particlesMesh);
+
+        const ambientLightBg = new THREE.AmbientLight(0xffffff, 0.2);
+        sceneBg.add(ambientLightBg);
+        const pointLight1Bg = new THREE.PointLight(0xa855f7, 2, 50); pointLight1Bg.position.set(10, 10, 10); sceneBg.add(pointLight1Bg);
+        const pointLight2Bg = new THREE.PointLight(0x3b82f6, 2, 50); pointLight2Bg.position.set(-10, -5, 10); sceneBg.add(pointLight2Bg);
+        const rimLightBg = new THREE.DirectionalLight(0xffffff, 1); rimLightBg.position.set(0, 5, -10); sceneBg.add(rimLightBg);
+
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) * 0.0005;
+            mouseY = (e.clientY - window.innerHeight / 2) * 0.0005;
+        });
+
+        const clockBg = new THREE.Clock();
+        function animateBg() {
+            const time = clockBg.getElapsedTime();
+
+            // Animate Background Particles
+            const scrollRatioParticles = window.scrollY / window.innerHeight;
+            particlesMesh.position.y = scrollRatioParticles * 10;
+            particlesMesh.rotation.y = time * 0.05;
+            particlesMesh.rotation.x = time * 0.02;
+            particlesMaterial.opacity = 0.4 + Math.sin(time) * 0.2;
+
+            rendererBg.render(sceneBg, cameraBg);
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        window.addEventListener('resize', () => {
+            cameraBg.aspect = window.innerWidth / window.innerHeight;
+            cameraBg.updateProjectionMatrix();
+            rendererBg.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+
+    <!-- API Integration & I18n -->
+    <script>
+        // WordPress API Configuration
+        const WP_API_BASE = 'https://blog.glossapi.gr/wp-json/wp/v2';
+        // Categories for language filtering
+        const LANG_CATEGORIES = {
+            el: [7, 1],   // glossapi, uncategorized (Greek)
+            en: [23, 13]  // glossapi-en, uncategorized-en (English)
+        };
+
+        const translations = {
+            en: {
+                home: "Home",
+                blog: "Blog",
+                new: "New",
+                journalTitle: "The GlossAPI Journal",
+                journalSubtitle: "Engineering notes on OCR, NLP, and Data Pipelines",
+                readArticle: "Read Article",
+                readStory: "Read Article",
+                insight: "Insight",
+                loading: "Loading...",
+                error: "Failed to load articles.",
+                noArticles: "No articles found."
+            },
+            el: {
+                home: "Αρχικη",
+                blog: "Blog",
+                new: "Νεο",
+                journalTitle: "Το Ημερολόγιο GlossAPI",
+                journalSubtitle: "Σημειώσεις μηχανικής για OCR, NLP και Data Pipelines",
+                readArticle: "Διαβάστε το Άρθρο",
+                readStory: "Διαβάστε το Άρθρο",
+                insight: "Ανάλυση",
+                loading: "Φόρτωση...",
+                error: "Αποτυχία φόρτωσης άρθρων.",
+                noArticles: "Δεν βρέθηκαν άρθρα."
+            }
+        };
+
+        let currentLang = 'el'; // Default to Greek as requested
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check URL param first
+            const urlParams = new URLSearchParams(window.location.search);
+            const langParam = urlParams.get('lang');
+
+            if (langParam === 'en') {
+                currentLang = 'en';
+            } else {
+                currentLang = 'el';
+            }
+
+            updateInterfaceLanguage();
+            loadArticles();
+        });
+
+        function toggleLanguage(lang) {
+            if (currentLang === lang) return;
+            currentLang = lang;
+
+            // Update URL without reload
+            const url = new URL(window.location);
+            if (lang === 'en') {
+                url.searchParams.set('lang', 'en');
+            } else {
+                url.searchParams.delete('lang'); // Native Greek
+            }
+            window.history.pushState({}, '', url);
+
+            updateInterfaceLanguage();
+            loadArticles();
+        }
+
+        function toggleMobileMenu() {
+            const overlay = document.getElementById('mobile-menu-overlay');
+            if (overlay.classList.contains('hidden')) {
+                // Open
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                // Small delay to allow display change before opacity transition
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                }, 10);
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            } else {
+                // Close
+                overlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    overlay.classList.remove('flex');
+                    overlay.classList.add('hidden');
+                }, 300); // Match transition duration
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        }
+
+        function updateInterfaceLanguage() {
+            const t = translations[currentLang];
+
+            // Nav
+            document.getElementById('nav-home').textContent = t.home;
+            document.getElementById('nav-blog-text').textContent = t.blog;
+
+            const homeLink = currentLang === 'en' ? 'index.html?lang=en' : 'index.html';
+            const blogLink = currentLang === 'en' ? 'blog.html?lang=en' : 'blog.html';
+
+            // Update Home Links
+            document.getElementById('nav-home').href = homeLink;
+            const mobileNavHome = document.getElementById('mobile-nav-home');
+            if (mobileNavHome) mobileNavHome.href = homeLink;
+
+            // Update Logo Link (assuming it's the first anchor in nav or has a specific class/ID - let's add an ID to be safe or target by href)
+            // Ideally we should have added an ID to the logo link. Let's try to target it via selector if we didn't add an ID.
+            // Looking at previous steps, the logo link is: <a href="index.html" ...>
+            const logoLink = document.querySelector('#main-nav a[href*="index.html"]');
+            if (logoLink) logoLink.href = homeLink;
+            // Also update the logo in the mobile menu if it exists (it doesn't, only text links)
+
+            document.getElementById('nav-blog').href = blogLink;
+
+            document.getElementById('nav-new-badge').textContent = t.new;
+
+            // Mobile Nav Text
+            if (mobileNavHome) mobileNavHome.textContent = t.home;
+
+            const mobileNavBlogText = document.getElementById('mobile-nav-blog-text');
+            if (mobileNavBlogText) mobileNavBlogText.textContent = t.blog;
+
+            const mobileNavNewBadge = document.getElementById('mobile-nav-new-badge');
+            if (mobileNavNewBadge) mobileNavNewBadge.textContent = t.new;
+
+            // Header
+            const pageTitle = document.getElementById('page-title');
+            const pageSubtitle = document.getElementById('page-subtitle');
+            if (pageTitle) pageTitle.textContent = t.journalTitle;
+            if (pageSubtitle) pageSubtitle.textContent = t.journalSubtitle;
+
+            // Toggles
+            const btnEn = document.getElementById('lang-en');
+            const btnEl = document.getElementById('lang-el');
+
+            if (currentLang === 'en') {
+                btnEn.classList.replace('text-gray-500', 'text-purple-400');
+                btnEn.classList.remove('hover:text-white');
+                btnEl.classList.replace('text-purple-400', 'text-gray-500');
+                btnEl.classList.add('hover:text-white');
+            } else {
+                btnEl.classList.replace('text-gray-500', 'text-purple-400');
+                btnEl.classList.remove('hover:text-white');
+                btnEn.classList.replace('text-purple-400', 'text-gray-500');
+                btnEn.classList.add('hover:text-white');
+            }
+        }
+
+        async function loadArticles() {
+            const articlesWrapper = document.getElementById('articles-wrapper');
+            articlesWrapper.innerHTML = `<div class="flex justify-center items-center py-20">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+                    </div>`;
+
+            // WordPress API with category filtering for language
+            const categoryIds = LANG_CATEGORIES[currentLang].join(',');
+            const apiUrl = `${WP_API_BASE}/posts?_embed&per_page=50&categories=${categoryIds}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const articles = await response.json();
+
+                // Sort by date descending (WordPress already sorts, but ensure consistency)
+                articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Identify pinned (sticky posts in WordPress)
+                const pinnedArticles = articles.filter(a => a.sticky);
+                const otherArticles = articles.filter(a => !a.sticky);
+
+                let html = '';
+                const t = translations[currentLang];
+
+                // Render Featured
+                if (pinnedArticles.length > 0) {
+                    pinnedArticles.forEach(article => {
+                        html += renderFeatured(article, t);
+                    });
+                }
+
+                // Render Grid
+                if (otherArticles.length > 0) {
+                    html += '<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">';
+                    otherArticles.forEach(article => {
+                        html += renderCard(article, t);
+                    });
+                    html += '</div>';
+                }
+
+                if (articles.length === 0) {
+                    html = `<div class="text-center text-gray-500 py-20">${t.noArticles}</div>`;
+                }
+
+                articlesWrapper.innerHTML = html;
+
+                // Re-init glass hover effect for new elements
+                initGlassHover();
+                initTiltEffect();
+
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                articlesWrapper.innerHTML = `<div class="text-center text-red-400 py-20">${translations[currentLang].error}</div>`;
+            }
+        }
+
+        function initTiltEffect() {
+            const tiltCards = document.querySelectorAll('.article-card, .featured-article-card');
+            tiltCards.forEach(card => {
+                // Add necessary CSS for 3D effect
+                card.style.transformStyle = 'preserve-3d';
+                // Initial transition for smooth reset, will be overridden on mousemove
+                card.style.transition = 'transform 0.5s ease-out';
+
+                const isFeatured = card.classList.contains('featured-article-card');
+                const maxTilt = isFeatured ? 3.5 : 10; // Subtler tilt for featured articles
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    // Calculate rotation
+                    const rotateX = ((y - centerY) / centerY) * -maxTilt;
+                    const rotateY = ((x - centerX) / centerX) * maxTilt;
+
+                    // Apply transform with perspective
+                    // Using requestAnimationFrame for smoother performance
+                    requestAnimationFrame(() => {
+                        card.style.transition = 'transform 0.1s ease-out'; // Fast response
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                    });
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    // Reset
+                    card.style.transition = 'transform 0.5s ease-out'; // Smooth reset
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                });
+            });
+        }
+
+        function renderFeatured(article, t) {
+            // WordPress field mappings
+            const title = article.title?.rendered || '';
+            const desc = article.excerpt?.rendered?.replace(/<[^>]*>/g, '').trim() || '';
+            const date = new Date(article.date).toLocaleDateString(currentLang === 'el' ? 'el-GR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const imageUrl = article._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
+
+            const articleLink = currentLang === 'en' ? `article.html?slug=${article.slug}&lang=en` : `article.html?slug=${article.slug}`;
+
+            return `
+            <div class="glass-box featured-article-card p-[1px] mb-16 transition-colors group cursor-pointer relative" onclick="window.location.href='${articleLink}'">
+                <a href="${articleLink}" class="absolute inset-0 z-20"></a>
+
+                <!-- Decorative Corners -->
+                <div class="absolute top-0 right-0 w-8 h-8 border-t border-r border-purple-500/30 rounded-tr-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+                <div class="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-purple-500/30 rounded-bl-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+
+                <div class="bg-[#0f0b16]/90 backdrop-blur-xl rounded-[0.9rem] w-full relative overflow-hidden flex flex-col border border-white/5 group-hover:border-purple-500/20 transition-colors">
+                    <div class="grid md:grid-cols-2 min-h-[450px]">
+                        
+                        <!-- Image Side (Flush) -->
+                        <div class="relative h-64 md:h-full overflow-hidden border-r border-white/5">
+                            ${imageUrl ? `<img src="${imageUrl}" alt="${title}" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300">` : ''}
+                            
+                            <!-- Gradient Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0f0b16] via-transparent to-transparent opacity-90 md:opacity-40"></div>
+                            
+                            <!-- Tech Grid -->
+                            <div class="absolute inset-0 opacity-[0.1] pointer-events-none group-hover:opacity-0 transition-opacity duration-500" 
+                                 style="background-image: linear-gradient(0deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent); background-size: 30px 30px;">
+                            </div>
+
+                            <div class="absolute top-6 left-6 z-20">
+                                <span class="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold bg-purple-500/20 backdrop-blur-md border border-purple-500/30 text-white uppercase tracking-widest shadow-lg">
+                                    <span class="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 animate-pulse"></span> Featured
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Content Side -->
+                        <div class="flex flex-col justify-center relative z-20 p-8 md:p-12">
+                            <div class="flex items-center gap-3 text-xs text-purple-400 font-mono mb-6 uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
+                                <span class="bg-purple-500/10 px-3 py-1 rounded border border-purple-500/20">${date}</span>
+                            </div>
+                            
+                            <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-6 leading-tight transition-all duration-300">
+                                ${title}
+                            </h2>
+                            
+                            <p class="text-gray-400 leading-relaxed mb-10 line-clamp-3 font-light text-lg border-l-2 border-white/5 pl-6 group-hover:border-purple-500 transition-colors duration-300">
+                                ${desc}
+                            </p>
+                            
+                            <div class="flex items-center justify-between pt-8 border-t border-white/5 group-hover:border-purple-500/20 transition-colors mt-auto">
+                                <span class="text-sm font-bold text-gray-500 group-hover:text-white transition-colors">Read Article</span>
+                                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-purple-600 text-white transition-all duration-300 group-hover:scale-110 shadow-lg">
+                                    <i class="fa-solid fa-arrow-right transform -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderCard(article, t) {
+            // WordPress field mappings
+            const title = article.title?.rendered || '';
+            const desc = article.excerpt?.rendered?.replace(/<[^>]*>/g, '').trim() || '';
+            const date = new Date(article.date).toLocaleDateString(currentLang === 'el' ? 'el-GR' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            const imageUrl = article._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
+
+            const articleLink = currentLang === 'en' ? `article.html?slug=${article.slug}&lang=en` : `article.html?slug=${article.slug}`;
+
+            return `
+             <div class="glass-box article-card p-[1px] transition-colors group cursor-pointer relative h-full" onclick="window.location.href='${articleLink}'">
+                <a href="${articleLink}" class="absolute inset-0 z-20"></a>
+                
+                <!-- Decorative Corners -->
+                <div class="absolute top-0 right-0 w-8 h-8 border-t border-r border-purple-500/30 rounded-tr-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+                <div class="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-purple-500/30 rounded-bl-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+
+                <div class="bg-[#0f0b16]/90 backdrop-blur-xl rounded-[0.9rem] p-5 h-full w-full relative overflow-hidden flex flex-col border border-white/5 group-hover:border-purple-500/20 transition-colors">
+                    
+                    <!-- Image Section -->
+                    ${imageUrl ? `
+                    <div class="h-52 -mx-5 -mt-5 mb-6 relative overflow-hidden shrink-0">
+                        <img src="${imageUrl}" alt="${title}" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
+                        
+                        <!-- Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0f0b16] via-transparent to-transparent opacity-90"></div>
+                        
+                        <!-- Tech Grid -->
+                        <div class="absolute inset-0 opacity-[0.1] pointer-events-none group-hover:opacity-0 transition-opacity duration-500" 
+                             style="background-image: linear-gradient(0deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent); background-size: 30px 30px;">
+                        </div>
+                    </div>` : ''}
+
+                    <div class="flex items-center gap-3 text-[10px] text-purple-400 font-mono mb-3 uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
+                        <span class="bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20">${date}</span>
+                    </div>
+
+                    <h3 class="text-xl font-display font-bold text-white mb-3 leading-tight transition-all duration-300">
+                        ${title}
+                    </h3>
+                    
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3 border-l-2 border-white/5 pl-4 group-hover:border-purple-500 transition-colors duration-300">
+                        ${desc}
+                    </p>
+                    
+                    <div class="mt-auto flex items-center justify-between pt-4 border-t border-white/5 group-hover:border-purple-500/20 transition-colors">
+                        <span class="text-xs font-bold text-gray-500 group-hover:text-white transition-colors">Read Article</span>
+                        <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-purple-600 text-white transition-all duration-300 group-hover:scale-110 shadow-lg">
+                            <i class="fa-solid fa-arrow-right text-xs transform -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function initGlassHover() {
+            const glassBoxes = document.querySelectorAll('.glass-box');
+            glassBoxes.forEach(box => {
+                const style = window.getComputedStyle(box);
+                if (style.position === 'static') {
+                    box.style.position = 'relative';
+                }
+                // Remove old listener if any (not easily possible without reference, but multiple listeners is okay for now or we clone)
+                // A better way is to delegate or just add to new ones. 
+                // For simplicity, we just add. Mouseover is cheap.
+                box.addEventListener('mousemove', (e) => {
+                    const rect = box.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    box.style.setProperty('--mouse-x', `${x}px`);
+                    box.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+        }
+    </script>
+
+    <script>
+        // Navigation Hover Effect
+        const nav = document.querySelector('.floating-nav');
+        if (nav) {
+            nav.addEventListener('mousemove', (e) => {
+                const rect = nav.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                nav.style.setProperty('--mouse-x', `${x}px`);
+                nav.style.setProperty('--mouse-y', `${y}px`);
+            });
+        }
+    </script>
+</body>
+
+</html>
