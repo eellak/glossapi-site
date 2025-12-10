@@ -84,6 +84,7 @@
             /* Mask shine to only appear in the padding area (5px inner outline) */
             padding: 5px;
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             border-radius: inherit;
@@ -102,6 +103,7 @@
             position: relative;
         }
 
+        /* Nav specific overrides (synced with blog.html) */
         .floating-nav {
             background: rgba(13, 8, 20, 0.6);
             backdrop-filter: blur(16px);
@@ -119,14 +121,23 @@
             box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
         }
 
-        #bg-canvas {
-            position: fixed;
+        .floating-nav::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.25), transparent 40%);
             z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
             pointer-events: none;
+        }
+
+        .floating-nav:hover::before {
+            opacity: 1;
+            transition-duration: 0s;
         }
 
         .nav-link {
@@ -190,8 +201,27 @@
 
 <body class="antialiased selection:bg-purple-500 selection:text-white">
 
-    <!-- Global Background 3D Canvas -->
-    <canvas id="bg-canvas"></canvas>
+
+
+    <!-- Hero Background Wrapper (Static Layer) -->
+    <div id="hero-background-wrapper"
+        class="fixed top-0 left-0 w-full h-[85vh] z-0 pointer-events-none overflow-hidden hidden">
+        <!-- Image -->
+        <img id="hero-image" src="" alt="Hero"
+            class="w-full h-full object-cover opacity-60 scale-105 transform transition-transform duration-[30s] hover:scale-110 mask-image-gradient">
+
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black/50 z-10"></div>
+
+        <!-- Tech Grid -->
+        <div class="absolute inset-0 opacity-[0.15] z-0"
+            style="background-image: linear-gradient(0deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent); background-size: 50px 50px;">
+        </div>
+
+        <!-- Gradient Overlays -->
+        <div class="absolute inset-0 bg-gradient-to-b from-[#1a1625]/30 via-transparent to-[#1a1625] z-10"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#1a1625]/80 via-transparent to-[#1a1625]/80 z-10"></div>
+    </div>
 
     <!-- Navigation Wrapper -->
     <div class="fixed w-full z-50 top-6 px-4">
@@ -228,17 +258,15 @@
                         <i class="fa-solid fa-bars text-xl"></i>
                     </button>
 
-                    <!-- 2. Menu Items (Desktop Only - Centered) -->
+                    <!-- 2. Menu Items (Desktop Only) -->
                     <div
                         class="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest font-display text-gray-400 z-20 order-2 absolute left-1/2 -translate-x-1/2">
                         <a href="index.html" id="nav-home"
-                            class="nav-link cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 uppercase">Αρχικη</a>
+                            class="nav-link hover:text-white transition-colors cursor-pointer">Αρχικη</a>
                         <a href="blog.html" id="nav-blog"
-                            class="nav-link active hover:text-white transition-colors flex items-center gap-2">
-                            <span id="nav-blog-text">Blog</span>
-                            <span id="nav-new-badge"
-                                class="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/30 font-bold uppercase">Νεο</span>
-                        </a>
+                            class="nav-link active hover:text-white transition-colors cursor-pointer">Blog</a>
+                        <a href="aboutus.html" id="nav-about"
+                            class="nav-link hover:text-white transition-colors cursor-pointer">Σχετικά</a>
                     </div>
 
                     <!-- 3. Language Toggle (Right) -->
@@ -268,12 +296,8 @@
             class="flex flex-col items-center gap-8 text-2xl font-bold uppercase tracking-widest font-display text-gray-400">
             <a href="index.html" onclick="toggleMobileMenu()" id="mobile-nav-home"
                 class="nav-link cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 uppercase">Αρχικη</a>
-            <a href="blog.html" id="mobile-nav-blog"
-                class="nav-link active hover:text-white transition-colors flex items-center gap-2">
-                <span id="mobile-nav-blog-text">Blog</span>
-                <span id="mobile-nav-new-badge"
-                    class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30 font-bold uppercase">Νεο</span>
-            </a>
+            <a href="blog.html" id="mobile-nav-blog" class="nav-link active hover:text-white transition-colors">Blog</a>
+            <a href="aboutus.html" class="nav-link hover:text-white transition-colors">Σχετικά</a>
 
             <!-- Mobile Language Toggle -->
             <div class="flex items-center gap-4 mt-4">
@@ -287,7 +311,7 @@
     </div>
 
     <!-- MAIN CONTAINER -->
-    <main class="relative z-10 pt-40 pb-20 px-4 sm:px-6 min-h-screen">
+    <main class="relative z-10 pt-28 pb-20 px-4 sm:px-6 min-h-screen">
         <div class="max-w-4xl mx-auto">
 
             <!-- Loading State -->
@@ -331,7 +355,7 @@
                         </div>
 
                         <h1 id="article-title"
-                            class="text-5xl md:text-7xl font-display font-bold text-white mb-0 leading-[1.1] tracking-tight drop-shadow-2xl">
+                            class="text-3xl md:text-7xl font-display font-bold text-white mb-0 leading-[1.1] tracking-tight drop-shadow-2xl">
                         </h1>
 
                     </div>
@@ -342,13 +366,13 @@
                     class="glass-box p-[5px] rounded-3xl relative border border-white/10 hover:border-purple-500/50 transition-colors duration-100 group">
                     <!-- Content Background -->
                     <div
-                        class="bg-[#0a0a0f]/60 backdrop-blur-xl p-8 md:p-16 rounded-[1.3rem] relative overflow-hidden z-10">
+                        class="bg-[#0a0a0f]/60 backdrop-blur-xl p-4 md:p-16 rounded-[1.3rem] relative overflow-hidden z-10">
 
 
 
-                        <div id="article-body" class="prose prose-invert prose-lg max-w-none
+                        <div id="article-body" class="prose prose-invert prose-base md:prose-lg max-w-none
                             prose-headings:font-display prose-headings:font-bold prose-headings:text-white
-                            prose-h1:text-4xl prose-h1:mb-8 prose-h1:mt-12
+                            prose-h1:text-2xl md:prose-h1:text-4xl prose-h1:mb-8 prose-h1:mt-12
                             prose-h2:text-3xl prose-h2:text-purple-100 prose-h2:mt-16 prose-h2:mb-6 prose-h2:border-b prose-h2:border-white/5 prose-h2:pb-4
                             prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-light
                             prose-a:text-purple-400 prose-a:no-underline prose-a:border-b prose-a:border-purple-500/30 hover:prose-a:border-purple-400 hover:prose-a:text-purple-300 prose-a:transition-all
@@ -415,81 +439,8 @@
         </div>
     </footer>
 
-    <!-- 3D Background Script -->
-    <script>
-        const canvasBg = document.getElementById('bg-canvas');
-        const sceneBg = new THREE.Scene();
-        sceneBg.fog = new THREE.Fog(0x1a1625, 10, 60);
-        const cameraBg = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-        cameraBg.position.z = 20;
-        const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, antialias: true, alpha: true });
-        rendererBg.setSize(window.innerWidth, window.innerHeight);
-        rendererBg.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 
-        // --- Floating Particles ---
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 20000;
-        const posArray = new Float32Array(particlesCount * 3);
-
-        for (let i = 0; i < particlesCount * 3; i++) {
-            if (i % 3 === 1) { // Y axis
-                posArray[i] = (Math.random() - 0.5) * 250;
-            } else {
-                posArray[i] = (Math.random() - 0.5) * 60;
-            }
-        }
-
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
-        const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.15,
-            color: 0x8b5cf6, // Purple
-            transparent: true,
-            opacity: 0.6,
-            blending: THREE.AdditiveBlending
-        });
-
-        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-        sceneBg.add(particlesMesh);
-
-        const ambientLightBg = new THREE.AmbientLight(0xffffff, 0.2);
-        sceneBg.add(ambientLightBg);
-        const pointLight1Bg = new THREE.PointLight(0xa855f7, 2, 50); pointLight1Bg.position.set(10, 10, 10); sceneBg.add(pointLight1Bg);
-        const pointLight2Bg = new THREE.PointLight(0x3b82f6, 2, 50); pointLight2Bg.position.set(-10, -5, 10); sceneBg.add(pointLight2Bg);
-        const rimLightBg = new THREE.DirectionalLight(0xffffff, 1); rimLightBg.position.set(0, 5, -10); sceneBg.add(rimLightBg);
-
-        let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth / 2) * 0.0005;
-            mouseY = (e.clientY - window.innerHeight / 2) * 0.0005;
-        });
-
-        const clockBg = new THREE.Clock();
-        function animateBg() {
-            const time = clockBg.getElapsedTime();
-
-            // Animate Background Particles
-            const scrollRatioParticles = window.scrollY / window.innerHeight;
-            particlesMesh.position.y = scrollRatioParticles * 10;
-            particlesMesh.rotation.y = time * 0.05;
-            particlesMesh.rotation.x = time * 0.02;
-            particlesMaterial.opacity = 0.4 + Math.sin(time) * 0.2;
-
-            rendererBg.render(sceneBg, cameraBg);
-            requestAnimationFrame(animateBg);
-        }
-        animateBg();
-        window.addEventListener('resize', () => {
-            // Check for pinch-zoom on mobile
-            if (window.visualViewport && Math.abs(window.visualViewport.scale - 1) > 0.01) {
-                return;
-            }
-            cameraBg.aspect = window.innerWidth / window.innerHeight;
-            cameraBg.updateProjectionMatrix();
-            rendererBg.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
 
     <!-- Navigation Hover -->
     <script>
@@ -558,6 +509,7 @@
             en: {
                 home: "Home",
                 blog: "Blog",
+                about: "About Us",
                 new: "New",
                 back: "Back to Blog",
                 notFound: "Article not found",
@@ -569,6 +521,7 @@
             el: {
                 home: "Αρχικη",
                 blog: "Blog",
+                about: "Σχετικά",
                 new: "Νεο",
                 back: "Πίσω στο Blog",
                 notFound: "Το άρθρο δεν βρέθηκε",
@@ -656,14 +609,19 @@
             const t = translations[currentLang];
             document.getElementById('nav-home').textContent = t.home;
 
-            const navBlogText = document.getElementById('nav-blog-text');
+            const navBlogText = document.getElementById('nav-blog-text') || document.getElementById('nav-blog');
+            // Fallback for ID mismatch if any
             if (navBlogText) navBlogText.textContent = t.blog;
+
+            const navAbout = document.getElementById('nav-about');
+            if (navAbout) navAbout.textContent = t.about;
 
             const navNewBadge = document.getElementById('nav-new-badge');
             if (navNewBadge) navNewBadge.textContent = t.new;
 
             const homeLink = currentLang === 'en' ? 'index.html?lang=en' : 'index.html';
             const blogLink = currentLang === 'en' ? 'blog.html?lang=en' : 'blog.html';
+            const aboutLink = currentLang === 'en' ? 'aboutus.html?lang=en' : 'aboutus.html';
 
             // Update Home Links
             document.getElementById('nav-home').href = homeLink;
@@ -674,14 +632,36 @@
             const logoLink = document.querySelector('#main-nav a[href*="index.html"]');
             if (logoLink) logoLink.href = homeLink;
 
-            document.getElementById('nav-blog').href = blogLink;
-            document.getElementById('back-link').href = blogLink;
-            document.getElementById('error-back').href = blogLink;
+            // Update Blog Links
+            const navBlog = document.getElementById('nav-blog');
+            if (navBlog) navBlog.href = blogLink;
 
-            document.getElementById('back-text').textContent = t.back;
-            document.getElementById('error-text').textContent = t.notFound;
-            document.getElementById('error-text').textContent = t.notFound;
-            document.getElementById('error-back').textContent = t.return;
+            // Update About Us Links
+            // Update About Us Links
+            // Use different variable name to avoid global scope conflict if using single script
+            const navAboutEl = document.getElementById('nav-about');
+            if (navAboutEl) navAboutEl.href = aboutLink;
+            document.querySelectorAll('a[href^="aboutus.html"]').forEach(el => el.href = aboutLink);
+
+            const backLink = document.getElementById('back-link');
+            if (backLink) backLink.href = blogLink;
+
+            const errorBack = document.getElementById('error-back');
+            if (errorBack) errorBack.href = blogLink;
+
+            // Update About Us Links (New)
+            // Update About Us Links (New)
+            if (navAbout) navAbout.href = aboutLink;
+            // Also catch mobile or other instances
+            document.querySelectorAll('a[href^="aboutus.html"]').forEach(el => el.href = aboutLink);
+
+            const backText = document.getElementById('back-text');
+            if (backText) backText.textContent = t.back;
+
+            const errorText = document.getElementById('error-text');
+            if (errorText) errorText.textContent = t.notFound;
+
+            if (errorBack) errorBack.textContent = t.return;
 
             // Mobile Nav
             if (mobileNavHome) mobileNavHome.textContent = t.home;
@@ -695,17 +675,47 @@
             // Update Toggles
             const btnEn = document.getElementById('lang-en');
             const btnEl = document.getElementById('lang-el');
+            const mobileBtnEn = document.getElementById('mobile-lang-en');
+            const mobileBtnEl = document.getElementById('mobile-lang-el');
 
             if (currentLang === 'en') {
-                btnEn.classList.replace('text-gray-500', 'text-purple-400');
-                btnEn.classList.remove('hover:text-white');
-                btnEl.classList.replace('text-purple-400', 'text-gray-500');
-                btnEl.classList.add('hover:text-white');
+                if (btnEn) {
+                    btnEn.classList.replace('text-gray-500', 'text-purple-400');
+                    btnEn.classList.remove('hover:text-white');
+                }
+                if (btnEl) {
+                    btnEl.classList.replace('text-purple-400', 'text-gray-500');
+                    btnEl.classList.add('hover:text-white');
+                }
+
+                // Mobile
+                if (mobileBtnEn) {
+                    mobileBtnEn.classList.replace('text-gray-500', 'text-purple-400');
+                    mobileBtnEn.classList.remove('hover:text-white');
+                }
+                if (mobileBtnEl) {
+                    mobileBtnEl.classList.replace('text-purple-400', 'text-gray-500');
+                    mobileBtnEl.classList.add('hover:text-white');
+                }
             } else {
-                btnEl.classList.replace('text-gray-500', 'text-purple-400');
-                btnEl.classList.remove('hover:text-white');
-                btnEn.classList.replace('text-purple-400', 'text-gray-500');
-                btnEn.classList.add('hover:text-white');
+                if (btnEl) {
+                    btnEl.classList.replace('text-gray-500', 'text-purple-400');
+                    btnEl.classList.remove('hover:text-white');
+                }
+                if (btnEn) {
+                    btnEn.classList.replace('text-purple-400', 'text-gray-500');
+                    btnEn.classList.add('hover:text-white');
+                }
+
+                // Mobile
+                if (mobileBtnEl) {
+                    mobileBtnEl.classList.replace('text-gray-500', 'text-purple-400');
+                    mobileBtnEl.classList.remove('hover:text-white');
+                }
+                if (mobileBtnEn) {
+                    mobileBtnEn.classList.replace('text-purple-400', 'text-gray-500');
+                    mobileBtnEn.classList.add('hover:text-white');
+                }
             }
         }
 
@@ -766,9 +776,25 @@
                 }
 
                 if (translatedArticle) {
-                    // Found translation - redirect to it
+                    // Found translation - switch content without reload
                     const langParam = lang === 'en' ? '&lang=en' : '';
-                    window.location.href = `article.html?slug=${translatedArticle.slug}${langParam}`;
+                    const newUrl = `article.html?slug=${translatedArticle.slug}${langParam}`;
+
+                    // Update URL
+                    window.history.pushState({}, '', newUrl);
+
+                    // Update State
+                    currentLang = lang;
+                    currentArticle = translatedArticle;
+
+                    // Render new content
+                    renderArticle(translatedArticle);
+                    updateInterfaceLanguage();
+
+                    // Restore buttons
+                    if (lang === 'en') btnEn.textContent = originalText;
+                    else btnEl.textContent = originalText;
+
                 } else {
                     // No translation found - show message and redirect to blog
                     const t = translations[lang];
@@ -779,8 +805,11 @@
                 }
             } catch (error) {
                 console.error('Error finding translation:', error);
-                // On error, redirect to blog
-                window.location.href = lang === 'en' ? 'blog.html?lang=en' : 'blog.html';
+                // On error, try redirecting to blog or staying put
+                alert('Error finding translation.');
+                // Restore buttons
+                if (lang === 'en') btnEn.textContent = originalText;
+                else btnEl.textContent = originalText;
             }
         }
 
@@ -800,29 +829,15 @@
             });
 
             // Render Background Cover
+            const heroWrapper = document.getElementById('hero-background-wrapper');
+            const heroImage = document.getElementById('hero-image');
+
             if (imageUrl) {
-                const coverContainer = document.createElement('div');
-                coverContainer.className = 'absolute top-0 left-0 w-full h-[85vh] z-0 pointer-events-none overflow-hidden';
-                coverContainer.innerHTML = `
-                    <!-- Image -->
-                    <img src="${imageUrl}" class="w-full h-full object-cover opacity-60 scale-105 transform transition-transform duration-[30s] hover:scale-110 mask-image-gradient">
-                    
-                    <!-- Dark Overlay -->
-                    <div class="absolute inset-0 bg-black/50 z-10"></div>
-
-                    <!-- Tech Grid (Moved behind gradients for fade) -->
-                    <div class="absolute inset-0 opacity-[0.15] z-0" 
-                         style="background-image: linear-gradient(0deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, #a855f7 25%, #a855f7 26%, transparent 27%, transparent 74%, #a855f7 75%, #a855f7 76%, transparent 77%, transparent); background-size: 50px 50px;">
-                    </div>
-
-                    <!-- Gradient Overlays -->
-                    <div class="absolute inset-0 bg-gradient-to-b from-[#1a1625]/30 via-transparent to-[#1a1625] z-10"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#1a1625]/80 via-transparent to-[#1a1625]/80 z-10"></div>
-                `;
-                const main = document.querySelector('main');
-                if (main) {
-                    document.body.insertBefore(coverContainer, document.body.firstChild);
-                }
+                heroImage.src = imageUrl;
+                heroWrapper.classList.remove('hidden');
+            } else {
+                heroWrapper.classList.add('hidden');
+                heroImage.src = ''; // Clear source
             }
 
             document.getElementById('article-title').innerHTML = title;
@@ -831,6 +846,18 @@
             // Render Body Content (WordPress provides pre-rendered HTML)
             const bodyContainer = document.getElementById('article-body');
             bodyContainer.innerHTML = content;
+
+            // Improved duplicate image detection for WordPress
+            // Check for wp-block-post-featured-image or just the first figure/img
+            const firstChild = bodyContainer.firstElementChild;
+            if (firstChild) {
+                if (firstChild.tagName === 'IMG' || firstChild.querySelector('img')) {
+                    // It's likely the image or a wrapper containing it
+                    firstChild.style.display = 'none';
+                } else if (firstChild.classList.contains('wp-block-post-featured-image')) {
+                    firstChild.style.display = 'none';
+                }
+            }
 
             /* Source Link rendering (commented out)
             const sourceContainer = document.getElementById('source-container');
@@ -874,6 +901,19 @@
 
         // Note: renderBlocks and renderChildren are no longer needed for WordPress
         // as content comes pre-rendered in content.rendered
+    </script>
+    <script>
+        // Navigation Hover Effect (Shine)
+        const nav = document.querySelector('.floating-nav');
+        if (nav) {
+            nav.addEventListener('mousemove', (e) => {
+                const rect = nav.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                nav.style.setProperty('--mouse-x', `${x}px`);
+                nav.style.setProperty('--mouse-y', `${y}px`);
+            });
+        }
     </script>
 </body>
 

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlossAPI - About</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Instant Language Switch (Prevent Flash) -->
+    <style>
+        html.lang-switching {
+            visibility: hidden;
+        }
+    </style>
+    <script>
+        (function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('lang') === 'en') {
+                document.documentElement.classList.add('lang-switching');
+            }
+        })();
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        gloss: {
+                            bg: '#1a1625',
+                            purple: '#8b5cf6',
+                            neon: '#d8b4fe',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #1a1625;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .glass-box {
+            background: rgba(13, 8, 20, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .glass-box:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 12px 48px rgba(139, 92, 246, 0.15);
+        }
+
+        /* Nav specific overrides (synced with blog.html) */
+        .floating-nav {
+            background: rgba(13, 8, 20, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-radius: 24px;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .floating-nav:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+        }
+
+        .floating-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.25), transparent 40%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .floating-nav:hover::before {
+            opacity: 1;
+            transition-duration: 0s;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link.active {
+            color: white;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #a855f7;
+            box-shadow: 0 0 8px #a855f7;
+            border-radius: 2px;
+        }
+
+        /* Glowing Border Animation */
+        .glow-border {
+            position: relative;
+        }
+
+        .glow-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            z-index: -1;
+            background: linear-gradient(45deg, #8b5cf6, #d8b4fe, #1a1625, #8b5cf6);
+            background-size: 400%;
+            border-radius: inherit;
+            animation: glowing 20s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glow-border:hover::after {
+            opacity: 0.5;
+        }
+
+        @keyframes glowing {
+            0% {
+                background-position: 0 0;
+            }
+
+            50% {
+                background-position: 400% 0;
+            }
+
+            100% {
+                background-position: 0 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-purple-500 selection:text-white">
+
+    <!-- Global Background 3D Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation Wrapper -->
+    <div class="fixed w-full z-50 top-6 px-4">
+        <div class="max-w-7xl mx-auto relative">
+            <!-- Main Nav Bar -->
+            <div id="main-nav" class="floating-nav p-[5px] relative z-20 rounded-3xl group/nav">
+                <div class="w-full h-full bg-[#0d0814]/60 rounded-[1.2rem] px-6 py-3 flex justify-between items-center">
+
+                    <!-- 1. Logos -->
+                    <div
+                        class="flex items-center gap-4 z-20 order-2 md:order-1 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
+                        <!-- GFOSS Logo -->
+                        <a href="https://eellak.ellak.gr/" target="_blank"
+                            class="relative block h-8 w-auto flex-shrink-0">
+                            <img src="assets/gfoss_white.svg" alt="GFOSS"
+                                class="h-full w-auto transition-opacity duration-300 group-hover/nav:opacity-0">
+                            <img src="assets/gfoss.svg" alt="GFOSS"
+                                class="absolute inset-0 h-full w-auto transition-opacity duration-300 opacity-0 group-hover/nav:opacity-100">
+                        </a>
+
+                        <!-- Separator -->
+                        <div class="h-4 w-[1px] bg-white/20"></div>
+
+                        <!-- GlossAPI Logo -->
+                        <a href="index.html"
+                            class="flex items-center h-6 w-auto flex-shrink-0 hover:opacity-80 transition-opacity mt-0.5">
+                            <img src="assets/glossapi_white.svg" alt="GlossAPI" class="h-4/5 w-auto">
+                        </a>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()"
+                        class="md:hidden z-20 order-1 text-white p-1 focus:outline-none flex items-center justify-center h-8 w-8">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- 2. Menu Items -->
+                    <div
+                        class="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest font-display text-gray-400 z-20 order-2 absolute left-1/2 -translate-x-1/2">
+                        <a href="index.html" id="nav-home"
+                            class="nav-link hover:text-white transition-colors cursor-pointer">Αρχικη</a>
+                        <a href="blog.html" id="nav-blog"
+                            class="nav-link hover:text-white transition-colors cursor-pointer">Blog</a>
+                        <a href="aboutus.html" id="nav-about"
+                            class="nav-link active hover:text-white transition-colors cursor-pointer">Σχετικά</a>
+                    </div>
+
+                    <!-- 3. Language Toggle -->
+                    <div class="z-20 order-3 hidden md:flex items-center gap-2">
+                        <button onclick="toggleLanguage('en')" id="lang-en"
+                            class="text-sm font-bold px-2 py-1 rounded transition-colors text-gray-500 hover:text-white">EN</button>
+                        <div class="w-[1px] h-3 bg-gray-600"></div>
+                        <button onclick="toggleLanguage('el')" id="lang-el"
+                            class="text-sm font-bold px-2 py-1 rounded transition-colors text-purple-400">EL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay"
+        class="fixed inset-0 z-[60] bg-[#0d0814]/95 backdrop-blur-xl hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300">
+        <!-- Close Button -->
+        <button onclick="toggleMobileMenu()"
+            class="absolute top-8 right-8 text-white/60 hover:text-white transition-colors">
+            <i class="fa-solid fa-xmark text-3xl"></i>
+        </button>
+
+        <!-- Menu Items -->
+        <div
+            class="flex flex-col items-center gap-8 text-2xl font-bold uppercase tracking-widest font-display text-gray-400">
+            <a href="index.html" id="mobile-nav-home" class="nav-link hover:text-white transition-colors">Αρχικη</a>
+            <a href="blog.html" id="mobile-nav-blog" class="nav-link hover:text-white transition-colors">Blog</a>
+            <a href="aboutus.html" id="mobile-nav-about"
+                class="nav-link active text-white hover:text-white transition-colors">Σχετικά</a>
+
+            <!-- Mobile Language Toggle -->
+            <div class="flex items-center gap-4 mt-4">
+                <button onclick="toggleLanguage('en'); toggleMobileMenu()" id="mobile-lang-en"
+                    class="text-xl font-bold px-3 py-2 rounded transition-colors text-gray-500 hover:text-white">EN</button>
+                <div class="w-[1px] h-6 bg-gray-600"></div>
+                <button onclick="toggleLanguage('el'); toggleMobileMenu()" id="mobile-lang-el"
+                    class="text-xl font-bold px-3 py-2 rounded transition-colors text-purple-400">EL</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-40 pb-20 px-4 min-h-screen flex flex-col items-center">
+
+        <div id="content-main" class="w-full">
+            <!-- Hero Section -->
+            <div class="max-w-5xl mx-auto w-full text-center mb-24 relative">
+                <div
+                    class="absolute -top-20 left-1/2 -translate-x-1/2 w-[200%] h-[200%] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none">
+                </div>
+
+                <h1
+                    class="flex flex-col md:flex-row items-center justify-center gap-4 text-5xl md:text-7xl font-display font-bold text-white mb-6 tracking-tighter opacity-90 leading-tight">
+                    <img src="assets/glossapi_white.svg" alt="GlossAPI" class="h-16 md:h-24 w-auto">
+                </h1>
+                <p id="hero-subtitle"
+                    class="text-xl md:text-2xl text-purple-200/80 font-light max-w-3xl mx-auto font-serif italic">
+                    Ανοικτή Υποδομή για Ελληνικά AI-Ready Δεδομένα
+                </p>
+            </div>
+
+            <!-- Content Container -->
+            <div class="max-w-4xl mx-auto w-full perspective-1000 space-y-12">
+
+                <!-- Intro Card -->
+                <div class="glass-box glow-border rounded-[2rem] p-1 animate-float">
+                    <div
+                        class="bg-[#0a0a0f]/80 backdrop-blur-3xl rounded-[1.9rem] p-8 md:p-12 relative overflow-hidden">
+                        <div class="prose prose-invert prose-lg max-w-none font-sans font-light leading-relaxed">
+                            <p id="card-intro-title" class="text-xl text-white font-medium mb-6">
+                                Προς ένα διαφανές και συμμετοχικό οικοσύστημα επεξεργασίας φυσικής γλώσσας
+                            </p>
+                            <p id="card-intro-p1">
+                                Η Εταιρεία Ελεύθερου Λογισμικού και Λογισμικού Ανοιχτού Κώδικα (ΕΕΛΛΑΚ) αποτελεί έναν
+                                από τους πλέον δραστήριους οργανισμούς στην Ελλάδα στον χώρο της ανοιχτής τεχνολογίας
+                                και της ψηφιακής διακυβέρνησης. Ως μη κερδοσκοπικός φορέας, προωθεί συστηματικά την
+                                ανοιχτότητα, τη διαφάνεια και τη συνεργατική καινοτομία, ενισχύοντας την υιοθέτηση των
+                                ανοιχτών προτύπων σε δημόσιους, ακαδημαϊκούς και ερευνητικούς φορείς.
+                            </p>
+                            <p id="card-intro-p2">
+                                Στο πλαίσιο αυτής της αποστολής, η ΕΕΛΛΑΚ ανέπτυξε το GlossAPI, μια πρωτοβουλία που
+                                στοχεύει στην ενίσχυση της ελληνικής γλώσσας στην εποχή της τεχνητής νοημοσύνης και στην
+                                καθιέρωσή της ως ισότιμης με τις μεγάλες ευρωπαϊκές και διεθνείς γλώσσες μέσα στο
+                                οικοσύστημα της επεξεργασίας φυσικής γλώσσας.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Need for Data -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="glass-box rounded-[2rem] p-[1px] hover:border-purple-500/30 transition-colors">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                            <h3 id="card-models-title"
+                                class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Από τα Μοντέλα
+                                στα Δεδομένα</h3>
+                            <p id="card-models-text" class="text-gray-300 leading-relaxed font-light">
+                                Το GlossAPI γεννήθηκε από την ανάγκη για ανάπτυξη ελληνικών γλωσσικών μοντέλων. Κατά τη
+                                διάρκεια της αρχικής διερεύνησης, έγινε εμφανές ότι το μεγαλύτερο εμπόδιο δεν ήταν η
+                                έλλειψη τεχνολογίας, αλλά η έλλειψη ποιοτικών, τεκμηριωμένων και ανοιχτών δεδομένων στα
+                                ελληνικά.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="glass-box rounded-[2rem] p-[1px] hover:border-purple-500/30 transition-colors">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                            <h3 id="card-gap-title"
+                                class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Το Κενό
+                                Δεδομένων</h3>
+                            <p id="card-gap-text" class="text-gray-300 leading-relaxed font-light">
+                                Η ελληνική γλώσσα παραμένει υποεκπροσωπημένη στα διεθνή σύνολα εκπαίδευσης τεχνητής
+                                νοημοσύνης. Ενδεικτικά, η αγγλική Wikipedia ξεπερνά τα 80 GB, ενώ η ελληνική
+                                περιορίζεται περίπου στο 1 GB. Η ΕΕΛΛΑΚ επιδιώκει να αντιμετωπίσει αυτό το θεμελιώδες
+                                πρόβλημα μέσω του GlossAPI.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- What Is GlossAPI -->
+                <div class="glass-box rounded-[2rem] p-[1px]">
+                    <div class="bg-[#0a0a0f]/80 backdrop-blur-xl rounded-[1.9rem] p-8 md:p-12">
+                        <h2 id="card-what-title" class="text-3xl md:text-4xl font-display font-bold text-white mb-6">Τι
+                            είναι το GlossAPI</h2>
+                        <div class="prose prose-invert prose-lg max-w-none font-sans font-light leading-relaxed">
+                            <p id="card-what-p1">
+                                Το GlossAPI είναι μια ανοιχτού κώδικα βιβλιοθήκη Python και ταυτόχρονα μια τεχνική
+                                υποδομή για τη δημιουργία, επεξεργασία και δημοσίευση ελληνικών συνόλων δεδομένων
+                                έτοιμων για χρήση σε εφαρμογές τεχνητής νοημοσύνης και επεξεργασίας φυσικής γλώσσας.
+                            </p>
+                            <ul id="card-what-list" class="list-disc pl-5 space-y-2 marker:text-purple-500">
+                                <li>Η βιβλιοθήκη επεξεργάζεται κείμενα από διάφορες μορφές αρχείων (PDF, DOCX, HTML
+                                    κ.ά.).</li>
+                                <li>Καθαρίζει, τυποποιεί και επισημειώνει τα δεδομένα.</li>
+                                <li>Εξάγει σε μορφή AI-ready (Parquet, Markdown).</li>
+                                <li>Όλα τα παραγόμενα δεδομένα τεκμηριώνονται και δημοσιεύονται με ανοιχτές άδειες.</li>
+                            </ul>
+                            <p id="card-what-p3" class="mt-4">
+                                Λειτουργεί τόσο ως εργαλείο αυτοματοποίησης, όσο και ως πλαίσιο τεκμηρίωσης και
+                                διαφάνειας.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pipeline & Vision Grid -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Produced Outcomes -->
+                    <div class="glass-box rounded-[2rem] p-[1px]">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                            <h3 id="card-outcomes-title"
+                                class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Παραγόμενα
+                                Αποτελέσματα</h3>
+                            <p id="card-outcomes-text" class="text-gray-300 mb-4 font-light">Μέχρι σήμερα, έχουν
+                                παραχθεί και δημοσιευθεί 15
+                                σύνολα δεδομένων υψηλής ποιότητας:</p>
+                            <ul id="card-outcomes-list" class="text-gray-400 space-y-2 text-sm font-mono">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i>
+                                    Δημόσιες διαβουλεύσεις</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i>
+                                    Εγκυκλοπαιδικά κείμενα</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i>
+                                    Ακαδημαϊκές διατριβές</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i>
+                                    Ελληνική γραμματεία</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Values -->
+                    <div class="glass-box rounded-[2rem] p-[1px]">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                            <h3 id="card-values-title"
+                                class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Αξίες και Αρχές
+                            </h3>
+                            <ul id="card-values-list" class="text-gray-400 space-y-3 text-sm font-light">
+                                <li><strong class="text-white">Διαφάνεια:</strong> Πλήρης τεκμηρίωση και έλεγχος.</li>
+                                <li><strong class="text-white">Συμμετοχή:</strong> Πρόσβαση σε φοιτητές & ερευνητές.
+                                </li>
+                                <li><strong class="text-white">Ανοιχτά Πρότυπα:</strong> Συμβατότητα με διεθνή μοντέλα.
+                                </li>
+                                <li><strong class="text-white">Ηθική ΤΝ:</strong> Σεβασμός στα δικαιώματα και
+                                    δημοκρατικός έλεγχος.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8 mt-auto relative z-10 bg-[#0d0814]/60 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-gray-500 text-sm">
+                &copy; 2024 GlossAPI. Licensed under the EUPL v1.2.
+            </div>
+            <div class="flex items-center gap-6 mt-4 md:mt-0">
+                <a href="https://discord.gg/TY69npdMwM" target="_blank"
+                    class="text-gray-400 hover:text-[#5865F2] transition-colors">
+                    <div style="width: 20px; height: 20px;">
+                        <img src="assets/discord_white.svg"
+                            class="w-full h-full opacity-60 hover:opacity-100 transition-opacity" alt="Discord">
+                    </div>
+                </a>
+                <a href="https://huggingface.co/datasets/glossAPI" target="_blank"
+                    class="text-gray-400 hover:text-yellow-500 transition-colors">
+                    <div style="width: 25px; height: 25px;">
+                        <img src="assets/huggingface_white.svg"
+                            class="w-full h-full opacity-60 hover:opacity-100 transition-opacity" alt="HF">
+                    </div>
+                </a>
+                <a href="https://github.com/eellak/glossAPI" target="_blank"
+                    class="text-gray-400 hover:text-white transition-colors">
+                    <div style="width: 18px; height: 18px;">
+                        <img src="assets/github.svg"
+                            class="w-full h-full opacity-60 hover:opacity-100 transition-opacity" alt="GitHub">
+                    </div>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 3D Background Script -->
+    <script>
+        const canvasBg = document.getElementById('bg-canvas');
+        const sceneBg = new THREE.Scene();
+        sceneBg.fog = new THREE.Fog(0x1a1625, 10, 60);
+        const cameraBg = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        cameraBg.position.z = 20;
+        const rendererBg = new THREE.WebGLRenderer({ canvas: canvasBg, antialias: true, alpha: true });
+        rendererBg.setSize(window.innerWidth, window.innerHeight);
+        rendererBg.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 50;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0x8b5cf6,
+            transparent: true,
+            opacity: 0.3,
+            blending: THREE.AdditiveBlending
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        sceneBg.add(particlesMesh);
+
+        function animateBg() {
+            particlesMesh.rotation.y += 0.0003;
+            rendererBg.render(sceneBg, cameraBg);
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        window.addEventListener('resize', () => {
+            cameraBg.aspect = window.innerWidth / window.innerHeight;
+            cameraBg.updateProjectionMatrix();
+            rendererBg.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function toggleMobileMenu() {
+            const overlay = document.getElementById('mobile-menu-overlay');
+            if (overlay.classList.contains('hidden')) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            } else {
+                overlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    overlay.classList.remove('flex');
+                    overlay.classList.add('hidden');
+                }, 300);
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Navigation Hover Effect (Shine)
+        const nav = document.querySelector('.floating-nav');
+        if (nav) {
+            nav.addEventListener('mousemove', (e) => {
+                const rect = nav.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                nav.style.setProperty('--mouse-x', `${x}px`);
+                nav.style.setProperty('--mouse-y', `${y}px`);
+            });
+        }
+    </script>
+
+    <!-- I18n Script (JSON-based) -->
+    <script>
+        const translations = {
+            en: {
+                nav: { home: "Home", blog: "Blog", about: "About Us" },
+                hero: {
+                    title: "About GlossAPI",
+                    subtitle: "Open Infrastructure for Greek AI-Ready Data"
+                },
+                intro: {
+                    title: "Toward a Transparent and Participatory Natural Language Processing Ecosystem",
+                    p1: "The Free and Open Source Software Company (GFOSS – ΕΕΛΛΑΚ) is one of the most active organizations in Greece in the field of open technology and digital governance. As a non-profit entity, GFOSS systematically promotes openness, transparency, and collaborative innovation, fostering the adoption of open standards across public, academic, and research institutions.",
+                    p2: "Within this mission, GFOSS developed GlossAPI — an initiative that aims to strengthen the Greek language in the age of Artificial Intelligence (AI) and establish it as an equal player among major European and international languages in the Natural Language Processing (NLP) ecosystem."
+                },
+                models: {
+                    title: "From Models to Data",
+                    text: "GlossAPI was born out of the need to develop Greek language models. During the initial exploration phase, it quickly became evident that the main obstacle was not the lack of technology, but the lack of high-quality, well-documented, and openly accessible Greek data."
+                },
+                gap: {
+                    title: "The Data Gap",
+                    text: "The Greek language remains underrepresented in global AI training datasets. For example, while the English Wikipedia exceeds 80 GB, the Greek version barely reaches 1 GB. Through GlossAPI, GFOSS seeks to address this foundational problem by building a sustainable infrastructure."
+                },
+                what: {
+                    title: "What Is GlossAPI",
+                    p1: "GlossAPI is both an open-source Python library and a technical infrastructure for creating, processing, and publishing Greek AI-ready datasets for Natural Language Processing and AI applications.",
+                    list: `<li>Ingests text from various file formats (PDF, DOCX, HTML).</li>
+                           <li>Cleans, standardizes, and annotates content.</li>
+                           <li>Exports in AI-ready formats (Parquet, Markdown).</li>
+                           <li>Releases under open licenses (Creative Commons, EUPL-1.2).</li>`,
+                    p3: "GlossAPI serves both as an automation tool and as a framework of transparency and documentation in the data production process."
+                },
+                outcomes: {
+                    title: "Produced Outcomes",
+                    text: "To date, GlossAPI has produced and published 15 high-quality datasets covering:",
+                    list: `<li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Public consultations</li>
+                           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Encyclopedic texts</li>
+                           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Academic theses</li>
+                           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Modern Greek literature</li>`
+                },
+                values: {
+                    title: "Values & Principles",
+                    list: `<li><strong class="text-white">Transparency:</strong> Full documentation and traceability.</li>
+                           <li><strong class="text-white">Participation:</strong> Opportunities for students & researchers.</li>
+                           <li><strong class="text-white">Open Standards:</strong> Compatibility with global models.</li>
+                           <li><strong class="text-white">Ethical AI:</strong> Respect for rights and democratic oversight.</li>`
+                },
+                nav: { home: "Home", blog: "Blog", about: "About Us" }
+            },
+            el: {
+                nav: { home: "Αρχικη", blog: "Blog", about: "Σχετικά" },
+                hero: {
+                    title: "GlossAPI",
+                    subtitle: "Ανοικτή Υποδομή για Ελληνικά AI-Ready Δεδομένα"
+                },
+                intro: {
+                    title: "Προς ένα διαφανές και συμμετοχικό οικοσύστημα επεξεργασίας φυσικής γλώσσας",
+                    p1: "Η Εταιρεία Ελεύθερου Λογισμικού και Λογισμικού Ανοιχτού Κώδικα (ΕΕΛΛΑΚ) αποτελεί έναν από τους πλέον δραστήριους οργανισμούς στην Ελλάδα στον χώρο της ανοιχτής τεχνολογίας και της ψηφιακής διακυβέρνησης. Ως μη κερδοσκοπικός φορέας, προωθεί συστηματικά την ανοιχτότητα, τη διαφάνεια και τη συνεργατική καινοτομία, ενισχύοντας την υιοθέτηση των ανοιχτών προτύπων σε δημόσιους, ακαδημαϊκούς και ερευνητικούς φορείς.",
+                    p2: "Στο πλαίσιο αυτής της αποστολής, η ΕΕΛΛΑΚ ανέπτυξε το GlossAPI, μια πρωτοβουλία που στοχεύει στην ενίσχυση της ελληνικής γλώσσας στην εποχή της τεχνητής νοημοσύνης και στην καθιέρωσή της ως ισότιμης με τις μεγάλες ευρωπαϊκές και διεθνείς γλώσσες μέσα στο οικοσύστημα της επεξεργασίας φυσικής γλώσσας."
+                },
+                models: {
+                    title: "Από τα Μοντέλα στα Δεδομένα",
+                    text: "Το GlossAPI γεννήθηκε από την ανάγκη για ανάπτυξη ελληνικών γλωσσικών μοντέλων. Κατά τη διάρκεια της αρχικής διερεύνησης, έγινε εμφανές ότι το μεγαλύτερο εμπόδιο δεν ήταν η έλλειψη τεχνολογίας, αλλά η έλλειψη ποιοτικών, τεκμηριωμένων και ανοιχτών δεδομένων στα ελληνικά."
+                },
+                gap: {
+                    title: "Το Κενό Δεδομένων",
+                    text: "Η ελληνική γλώσσα παραμένει υποεκπροσωπημένη στα διεθνή σύνολα εκπαίδευσης τεχνητής νοημοσύνης. Ενδεικτικά, η αγγλική Wikipedia ξεπερνά τα 80 GB, ενώ η ελληνική περιορίζεται περίπου στο 1 GB. Η ΕΕΛΛΑΚ επιδιώκει να αντιμετωπίσει αυτό το θεμελιώδες πρόβλημα μέσω του GlossAPI."
+                },
+                what: {
+                    title: "Τι είναι το GlossAPI",
+                    p1: "Το GlossAPI είναι μια ανοιχτού κώδικα βιβλιοθήκη Python και ταυτόχρονα μια τεχνική υποδομή για τη δημιουργία, επεξεργασία και δημοσίευση ελληνικών συνόλων δεδομένων έτοιμων για χρήση σε εφαρμογές τεχνητής νοημοσύνης και επεξεργασίας φυσικής γλώσσας.",
+                    list: `<li>Η βιβλιοθήκη επεξεργάζεται κείμενα από διάφορες μορφές αρχείων (PDF, DOCX, HTML κ.ά.).</li>
+                           <li>Καθαρίζει, τυποποιεί και επισημειώνει τα δεδομένα.</li>
+                           <li>Εξάγει σε μορφή AI-ready (Parquet, Markdown).</li>
+                           <li>Όλα τα παραγόμενα δεδομένα τεκμηριώνονται και δημοσιεύονται με ανοιχτές άδειες.</li>`,
+                    p3: "Λειτουργεί τόσο ως εργαλείο αυτοματοποίησης, όσο και ως πλαίσιο τεκμηρίωσης και διαφάνειας."
+                },
+                outcomes: {
+                    title: "Παραγόμενα Αποτελέσματα",
+                    text: "Μέχρι σήμερα, έχουν παραχθεί και δημοσιευθεί 15 σύνολα δεδομένων υψηλής ποιότητας:",
+                    list: `<li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Δημόσιες διαβουλεύσεις</li>
+                           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Εγκυκλοπαιδικά κείμενα</li>
+                           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Ακαδημαϊκές διατριβές</li>
+                           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-500"></i> Ελληνική γραμματεία</li>`
+                },
+                values: {
+                    title: "Αξίες και Αρχές",
+                    list: `<li><strong class="text-white">Διαφάνεια:</strong> Πλήρης τεκμηρίωση και έλεγχος.</li>
+                           <li><strong class="text-white">Συμμετοχή:</strong> Πρόσβαση σε φοιτητές & ερευνητές.</li>
+                           <li><strong class="text-white">Ανοιχτά Πρότυπα:</strong> Συμβατότητα με διεθνή μοντέλα.</li>
+                           <li><strong class="text-white">Ηθική ΤΝ:</strong> Σεβασμός στα δικαιώματα και δημοκρατικός έλεγχος.</li>`
+                }
+            }
+        };
+
+        let currentLang = 'el'; // Default
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const langParam = urlParams.get('lang');
+
+            if (langParam === 'en') {
+                currentLang = 'en';
+            } else {
+                currentLang = 'el';
+            }
+            updateInterfaceLanguage();
+            // Remove veil
+            document.documentElement.classList.remove('lang-switching');
+        });
+
+        function toggleLanguage(lang) {
+            if (currentLang === lang) return;
+            currentLang = lang;
+
+            // Update URL
+            const url = new URL(window.location);
+            if (lang === 'en') {
+                url.searchParams.set('lang', 'en');
+            } else {
+                url.searchParams.delete('lang');
+            }
+            window.history.pushState({}, '', url);
+
+            updateInterfaceLanguage();
+        }
+
+        function updateInterfaceLanguage() {
+            const t = translations[currentLang];
+
+            // Nav
+            document.getElementById('nav-home').textContent = t.nav.home;
+            document.getElementById('nav-blog').textContent = t.nav.blog;
+            document.getElementById('nav-about').textContent = t.nav.about;
+
+            document.getElementById('mobile-nav-home').textContent = t.nav.home;
+            document.getElementById('mobile-nav-blog').textContent = t.nav.blog;
+            document.getElementById('mobile-nav-about').textContent = t.nav.about;
+
+            // Content
+            // document.getElementById('hero-title').textContent = t.hero.title; // Keep logo
+            document.getElementById('hero-subtitle').textContent = t.hero.subtitle;
+
+            document.getElementById('card-intro-title').textContent = t.intro.title;
+            document.getElementById('card-intro-p1').textContent = t.intro.p1;
+            document.getElementById('card-intro-p2').textContent = t.intro.p2;
+
+            document.getElementById('card-models-title').textContent = t.models.title;
+            document.getElementById('card-models-text').textContent = t.models.text;
+
+            document.getElementById('card-gap-title').textContent = t.gap.title;
+            document.getElementById('card-gap-text').textContent = t.gap.text;
+
+            document.getElementById('card-what-title').textContent = t.what.title;
+            document.getElementById('card-what-p1').textContent = t.what.p1;
+            document.getElementById('card-what-list').innerHTML = t.what.list;
+            document.getElementById('card-what-p3').textContent = t.what.p3;
+
+            document.getElementById('card-outcomes-title').textContent = t.outcomes.title;
+            document.getElementById('card-outcomes-text').textContent = t.outcomes.text;
+            document.getElementById('card-outcomes-list').innerHTML = t.outcomes.list;
+
+            document.getElementById('card-values-title').textContent = t.values.title;
+            document.getElementById('card-values-list').innerHTML = t.values.list;
+
+
+
+            // Update Links Suffix
+            const suffix = currentLang === 'en' ? '?lang=en' : '';
+            const baseHome = 'index.html';
+            const baseBlog = 'blog.html';
+            const baseAbout = 'aboutus.html';
+
+            // Safe update of specific link elements to avoid querying everything
+            // Actually, querying all is safer for persistence if IDs change, but querySelectorAll is fine.
+            document.querySelectorAll('a[href^="index.html"]').forEach(el => el.setAttribute('href', baseHome + suffix));
+            document.querySelectorAll('a[href^="blog.html"]').forEach(el => el.setAttribute('href', baseBlog + suffix));
+            document.querySelectorAll('a[href^="aboutus.html"]').forEach(el => el.setAttribute('href', baseAbout + suffix));
+
+            // Language Buttons
+            const btnEn = document.getElementById('lang-en');
+            const btnEl = document.getElementById('lang-el');
+            const mBtnEn = document.getElementById('mobile-lang-en');
+            const mBtnEl = document.getElementById('mobile-lang-el');
+
+            const activeClass = "text-sm font-bold px-2 py-1 rounded transition-colors text-purple-400";
+            const inactiveClass = "text-sm font-bold px-2 py-1 rounded transition-colors text-gray-500 hover:text-white";
+            const mActiveClass = "text-xl font-bold px-3 py-2 rounded transition-colors text-purple-400";
+            const mInactiveClass = "text-xl font-bold px-3 py-2 rounded transition-colors text-gray-500 hover:text-white";
+
+            if (currentLang === 'en') {
+                btnEn.className = activeClass;
+                btnEl.className = inactiveClass;
+                mBtnEn.className = mActiveClass;
+                mBtnEl.className = mInactiveClass;
+            } else {
+                btnEn.className = inactiveClass;
+                btnEl.className = activeClass;
+                mBtnEn.className = mInactiveClass;
+                mBtnEl.className = mActiveClass;
+            }
+        }
+
+        // Run init via DOMContentLoaded above
+        // Also run on DOMContentLoaded just in case something missed?
+        // No, initLanguage modifies DOM, so it MUST wait for DOM?
+        // Ah, if I run it in <head>, body isn't there yet.
+        // I placed this script at the BOTTOM of <body>. So it runs after elements parse.
+        // This is efficient and prevents FOUC because it runs before first paint finishes (usually).
+
+    </script>
+</body>
+
+</html>

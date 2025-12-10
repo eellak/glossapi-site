@@ -732,11 +732,9 @@
                         <a href="index.html" id="nav-home"
                             class="nav-link cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 uppercase">Αρχικη</a>
                         <a href="blog.html" id="nav-blog"
-                            class="nav-link active hover:text-white transition-colors flex items-center gap-2">
-                            <span id="nav-blog-text">Blog</span>
-                            <span id="nav-new-badge"
-                                class="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/30 font-bold uppercase">Νεο</span>
-                        </a>
+                            class="nav-link active hover:text-white transition-colors cursor-pointer uppercase">Blog</a>
+                        <a href="aboutus.html" id="nav-about"
+                            class="nav-link hover:text-white transition-colors cursor-pointer uppercase">Σχετικά</a>
                     </div>
 
                     <!-- 3. Language Toggle (Right) -->
@@ -767,11 +765,9 @@
             <a href="index.html" onclick="toggleMobileMenu()" id="mobile-nav-home"
                 class="nav-link cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 uppercase">Αρχικη</a>
             <a href="blog.html" id="mobile-nav-blog"
-                class="nav-link active hover:text-white transition-colors flex items-center gap-2">
-                <span id="mobile-nav-blog-text">Blog</span>
-                <span id="mobile-nav-new-badge"
-                    class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded border border-purple-500/30 font-bold uppercase">Νεο</span>
-            </a>
+                class="nav-link active hover:text-white transition-colors cursor-pointer uppercase">Blog</a>
+            <a href="aboutus.html"
+                class="nav-link hover:text-white transition-colors flex items-center gap-2">Σχετικά</a>
 
             <!-- Mobile Language Toggle -->
             <div class="flex items-center gap-4 mt-4">
@@ -926,6 +922,7 @@
             en: {
                 home: "Home",
                 blog: "Blog",
+                about: "About Us",
                 new: "New",
                 journalTitle: "The GlossAPI Journal",
                 journalSubtitle: "Engineering notes on OCR, NLP, and Data Pipelines",
@@ -939,6 +936,7 @@
             el: {
                 home: "Αρχικη",
                 blog: "Blog",
+                about: "Σχετικά",
                 new: "Νεο",
                 journalTitle: "Το Ημερολόγιο GlossAPI",
                 journalSubtitle: "Σημειώσεις μηχανικής για OCR, NLP και Data Pipelines",
@@ -1012,7 +1010,19 @@
 
             // Nav
             document.getElementById('nav-home').textContent = t.home;
-            document.getElementById('nav-blog-text').textContent = t.blog;
+            const navBlog = document.getElementById('nav-blog');
+            if (navBlog) navBlog.textContent = t.blog;
+
+            const navAbout = document.getElementById('nav-about');
+            const aboutLink = currentLang === 'en' ? 'aboutus.html?lang=en' : 'aboutus.html';
+
+            if (navAbout) {
+                navAbout.textContent = t.about;
+                navAbout.href = aboutLink;
+            }
+
+            // Update all about links (desktop + mobile)
+            document.querySelectorAll('a[href^="aboutus.html"]').forEach(el => el.href = aboutLink);
 
             const homeLink = currentLang === 'en' ? 'index.html?lang=en' : 'index.html';
             const blogLink = currentLang === 'en' ? 'blog.html?lang=en' : 'blog.html';
@@ -1031,7 +1041,8 @@
 
             document.getElementById('nav-blog').href = blogLink;
 
-            document.getElementById('nav-new-badge').textContent = t.new;
+            const navNewBadge = document.getElementById('nav-new-badge');
+            if (navNewBadge) navNewBadge.textContent = t.new;
 
             // Mobile Nav Text
             if (mobileNavHome) mobileNavHome.textContent = t.home;
@@ -1099,7 +1110,7 @@
 
                 // Render Grid
                 if (otherArticles.length > 0) {
-                    html += '<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">';
+                    html += '<div class="grid grid-cols-2 gap-3 md:gap-8 md:grid-cols-2 lg:grid-cols-3 mt-12">';
                     otherArticles.forEach(article => {
                         html += renderCard(article, t);
                     });
@@ -1244,11 +1255,11 @@
                 <div class="absolute top-0 right-0 w-8 h-8 border-t border-r border-purple-500/30 rounded-tr-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
                 <div class="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-purple-500/30 rounded-bl-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
 
-                <div class="bg-[#0f0b16]/90 backdrop-blur-xl rounded-[0.9rem] p-5 h-full w-full relative overflow-hidden flex flex-col border border-white/5 group-hover:border-purple-500/20 transition-colors">
+                <div class="bg-[#0f0b16]/90 backdrop-blur-xl rounded-[0.9rem] p-3 md:p-5 h-full w-full relative overflow-hidden flex flex-col border border-white/5 group-hover:border-purple-500/20 transition-colors">
                     
                     <!-- Image Section -->
                     ${imageUrl ? `
-                    <div class="h-52 -mx-5 -mt-5 mb-6 relative overflow-hidden shrink-0">
+                    <div class="h-32 md:h-52 -mx-3 -mt-3 mb-3 md:-mx-5 md:-mt-5 md:mb-6 relative overflow-hidden shrink-0">
                         <img src="${imageUrl}" alt="${title}" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
                         
                         <!-- Gradient Overlay -->
@@ -1264,11 +1275,11 @@
                         <span class="bg-purple-500/10 px-2 py-1 rounded border border-purple-500/20">${date}</span>
                     </div>
 
-                    <h3 class="text-xl font-display font-bold text-white mb-3 leading-tight transition-all duration-300">
+                    <h3 class="text-sm md:text-xl font-display font-bold text-white mb-3 leading-tight transition-all duration-300">
                         ${title}
                     </h3>
                     
-                    <p class="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3 border-l-2 border-white/5 pl-4 group-hover:border-purple-500 transition-colors duration-300">
+                    <p class="text-gray-400 text-xs md:text-sm leading-relaxed mb-6 line-clamp-3 border-l-2 border-white/5 pl-4 group-hover:border-purple-500 transition-colors duration-300">
                         ${desc}
                     </p>
                     
