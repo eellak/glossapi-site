@@ -53,16 +53,7 @@
                             neon: '#d8b4fe',
                         }
                     },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        }
-                    }
+
                 }
             }
         }
@@ -98,6 +89,36 @@
         .glass-box:hover {
             border-color: rgba(139, 92, 246, 0.3);
             box-shadow: 0 12px 48px rgba(139, 92, 246, 0.15);
+        }
+
+        /* Inner Outline Shine (The "3 steps" effect) - Ported from article.html */
+        .glass-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            /* Shine size */
+            background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.3), transparent 40%);
+            /* Mask shine to only appear in the padding area (5px inner outline) */
+            padding: 5px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .glass-box:hover::before {
+            opacity: 1;
+        }
+
+        /* Ensure Inner Content masks the shine */
+        .glass-box>div {
+            z-index: 1;
+            position: relative;
         }
 
         /* Nav specific overrides (synced with blog.html) */
@@ -155,42 +176,6 @@
             background: #a855f7;
             box-shadow: 0 0 8px #a855f7;
             border-radius: 2px;
-        }
-
-        /* Glowing Border Animation */
-        .glow-border {
-            position: relative;
-        }
-
-        .glow-border::after {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            z-index: -1;
-            background: linear-gradient(45deg, #8b5cf6, #d8b4fe, #1a1625, #8b5cf6);
-            background-size: 400%;
-            border-radius: inherit;
-            animation: glowing 20s linear infinite;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .glow-border:hover::after {
-            opacity: 0.5;
-        }
-
-        @keyframes glowing {
-            0% {
-                background-position: 0 0;
-            }
-
-            50% {
-                background-position: 400% 0;
-            }
-
-            100% {
-                background-position: 0 0;
-            }
         }
     </style>
 </head>
@@ -312,9 +297,10 @@
             <div class="max-w-4xl mx-auto w-full perspective-1000 space-y-12">
 
                 <!-- Intro Card -->
-                <div class="glass-box glow-border rounded-[2rem] p-1 animate-float">
+                <div
+                    class="glass-box p-[5px] rounded-3xl relative border border-white/10 hover:border-purple-500/50 transition-colors duration-100 group">
                     <div
-                        class="bg-[#0a0a0f]/80 backdrop-blur-3xl rounded-[1.9rem] p-8 md:p-12 relative overflow-hidden">
+                        class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.3rem] p-8 md:p-12 relative overflow-hidden z-10">
                         <div class="prose prose-invert prose-lg max-w-none font-sans font-light leading-relaxed">
                             <p id="card-intro-title" class="text-xl text-white font-medium mb-6">
                                 Προς ένα διαφανές και συμμετοχικό οικοσύστημα επεξεργασίας φυσικής γλώσσας
@@ -338,8 +324,9 @@
 
                 <!-- Need for Data -->
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="glass-box rounded-[2rem] p-[1px] hover:border-purple-500/30 transition-colors">
-                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                    <div
+                        class="glass-box p-[5px] rounded-3xl relative border border-white/10 hover:border-purple-500/50 transition-colors duration-100 group">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.3rem] p-8 h-full z-10 relative">
                             <h3 id="card-models-title"
                                 class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Από τα Μοντέλα
                                 στα Δεδομένα</h3>
@@ -351,8 +338,9 @@
                             </p>
                         </div>
                     </div>
-                    <div class="glass-box rounded-[2rem] p-[1px] hover:border-purple-500/30 transition-colors">
-                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                    <div
+                        class="glass-box p-[5px] rounded-3xl relative border border-white/10 hover:border-purple-500/50 transition-colors duration-100 group">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.3rem] p-8 h-full z-10 relative">
                             <h3 id="card-gap-title"
                                 class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Το Κενό
                                 Δεδομένων</h3>
@@ -367,8 +355,9 @@
                 </div>
 
                 <!-- What Is GlossAPI -->
-                <div class="glass-box rounded-[2rem] p-[1px]">
-                    <div class="bg-[#0a0a0f]/80 backdrop-blur-xl rounded-[1.9rem] p-8 md:p-12">
+                <div
+                    class="glass-box p-[5px] rounded-3xl relative border border-white/10 hover:border-purple-500/50 transition-colors duration-100 group">
+                    <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.3rem] p-8 md:p-12 z-10 relative">
                         <h2 id="card-what-title" class="text-3xl md:text-4xl font-display font-bold text-white mb-6">Τι
                             είναι το GlossAPI</h2>
                         <div class="prose prose-invert prose-lg max-w-none font-sans font-light leading-relaxed">
@@ -395,8 +384,9 @@
                 <!-- Pipeline & Vision Grid -->
                 <div class="grid md:grid-cols-2 gap-8">
                     <!-- Produced Outcomes -->
-                    <div class="glass-box rounded-[2rem] p-[1px]">
-                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                    <div
+                        class="glass-box p-[5px] rounded-3xl relative border border-white/10 hover:border-purple-500/50 transition-colors duration-100 group">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.3rem] p-8 h-full z-10 relative">
                             <h3 id="card-outcomes-title"
                                 class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Παραγόμενα
                                 Αποτελέσματα</h3>
@@ -417,8 +407,9 @@
                     </div>
 
                     <!-- Values -->
-                    <div class="glass-box rounded-[2rem] p-[1px]">
-                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.9rem] p-8 h-full">
+                    <div
+                        class="glass-box p-[5px] rounded-3xl relative border border-white/10 hover:border-purple-500/50 transition-colors duration-100 group">
+                        <div class="bg-[#0a0a0f]/60 backdrop-blur-xl rounded-[1.3rem] p-8 h-full z-10 relative">
                             <h3 id="card-values-title"
                                 class="text-2xl font-display font-bold text-white mb-4 text-purple-300">Αξίες και Αρχές
                             </h3>
@@ -534,14 +525,81 @@
         }
 
         // Navigation Hover Effect (Shine)
-        const nav = document.querySelector('.floating-nav');
-        if (nav) {
-            nav.addEventListener('mousemove', (e) => {
-                const rect = nav.getBoundingClientRect();
+        // Unified Glass Box Hover Effect
+        const glassBoxes = document.querySelectorAll('.glass-box, .floating-nav');
+        glassBoxes.forEach(box => {
+            // Ensure relative positioning for the pseudo-element if not already set
+            const style = window.getComputedStyle(box);
+            if (style.position === 'static') {
+                box.style.position = 'relative';
+            }
+
+            box.addEventListener('mousemove', (e) => {
+                const rect = box.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                nav.style.setProperty('--mouse-x', `${x}px`);
-                nav.style.setProperty('--mouse-y', `${y}px`);
+                box.style.setProperty('--mouse-x', `${x}px`);
+                box.style.setProperty('--mouse-y', `${y}px`);
+
+                // 3D Tilt Effect (Exclude Nav)
+                if (!box.classList.contains('floating-nav')) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -2; // Max rotation deg
+                    const rotateY = ((x - centerX) / centerX) * 2;
+
+                    box.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                }
+            });
+
+            box.addEventListener('mouseleave', () => {
+                if (!box.classList.contains('floating-nav')) {
+                    box.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                }
+            });
+        });
+
+        // Observer for dynamically added glass boxes
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) {
+                        if (node.classList.contains('glass-box') || node.classList.contains('floating-nav')) {
+                            attachGlassHover(node);
+                        }
+                        const children = node.querySelectorAll('.glass-box, .floating-nav');
+                        children.forEach(child => attachGlassHover(child));
+                    }
+                });
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        function attachGlassHover(box) {
+            const style = window.getComputedStyle(box);
+            if (style.position === 'static') box.style.position = 'relative';
+            box.addEventListener('mousemove', (e) => {
+                const rect = box.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                box.style.setProperty('--mouse-x', `${x}px`);
+                box.style.setProperty('--mouse-y', `${y}px`);
+
+                // 3D Tilt Effect
+                if (!box.classList.contains('floating-nav')) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -2;
+                    const rotateY = ((x - centerX) / centerX) * 2;
+
+                    box.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                }
+            });
+
+            box.addEventListener('mouseleave', () => {
+                if (!box.classList.contains('floating-nav')) {
+                    box.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                }
             });
         }
     </script>
