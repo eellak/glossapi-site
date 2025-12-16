@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlossAPI | The Data Singularity</title>
+    <title>GlossAPI | Greek Datasets</title>
 
     <!-- Fonts -->
     <link
@@ -976,7 +976,7 @@
                         <div class="h-[15vmin] md:h-[10vmin] w-[1px] bg-white/10 flex-shrink-0"></div>
 
                         <!-- GlossAPI Column -->
-                        <div class="flex flex-col items-start gap-1 flex-shrink-0">
+                        <div class="flex flex-col items-start gap-4 flex-shrink-0">
                             <!-- GlossAPI Logo -->
                             <a href="#" onclick="switchView('home')"
                                 class="relative block transition-transform duration-300 h-[15vmin] md:h-[12vmin]">
@@ -985,41 +985,14 @@
                             </a>
 
                             <!-- Title Text -->
-                            <div class="w-full flex flex-col items-start gap-0">
-                                <!-- Row 1: Knowledge extraction + From data -->
-                                <div class="w-full flex items-start justify-start gap-[0.7vmin] md:gap-[0.5vmin]">
-                                    <div
-                                        class="font-display font-medium tracking-[0.3em] text-white/60 uppercase text-[2.2vmin] md:text-[1.8vmin] leading-none pt-[0.6vmin] md:pt-[0.4vmin] whitespace-nowrap">
-                                        Knowledge extraction
-                                    </div>
-                                    <div
-                                        class="font-display font-bold text-white/80 uppercase text-[4.3vmin] md:text-[3.4vmin] leading-none tracking-[0.15em] whitespace-nowrap">
-                                        From data
-                                    </div>
-                                </div>
-
-                                <!-- Row 3: Entropy + Line -->
-                                <div class="w-full flex items-center justify-start gap-2 mt-0">
-                                    <span id="entropy-text"
-                                        class="font-mono text-purple-400 relative inline-block text-[3.3vmin] md:text-[2.8vmin]">
-                                        <!-- Glitch Background -->
-                                        <span
-                                            class="absolute inset-0 bg-purple-600/30 -skew-x-12 rounded border border-purple-500/30"></span>
-                                        <span class="relative z-10">
-                                            <span class="entropy-char e1">E</span>
-                                            <span class="entropy-char n1">n</span>
-                                            <span class="entropy-char t1">t</span>
-                                            <span class="entropy-char r1">r</span>
-                                            <span class="entropy-char o1">o</span>
-                                            <span class="entropy-char p1">p</span>
-                                            <span class="entropy-char y1">y</span>
-                                            <span class="entropy-char d1">.</span>
-                                        </span>
-                                    </span>
-                                    <!-- Filling Line -->
-                                    <div
-                                        class="h-[2px] flex-grow bg-purple-500/50 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]">
-                                    </div>
+                            <div class="w-full flex items-center gap-4 relative">
+                                <h1 id="hero-slogan"
+                                    class="font-display font-bold text-gray-400 uppercase text-[3.2vmin] md:text-[2.8vmin] leading-none tracking-[0.05em] whitespace-nowrap drop-shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+                                    Δεδομένα για την ΤΝ
+                                </h1>
+                                <!-- Filling Line -->
+                                <div
+                                    class="flex-grow h-[2px] bg-purple-500/50 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                                 </div>
                             </div>
                         </div>
@@ -1038,8 +1011,8 @@
 
                         <p id="hero-desc"
                             class="text-gray-300 leading-relaxed font-light text-center text-[1.2vh] md:text-[1.8vh] md:w-auto mx-auto">
-                            Το ολοκληρωμένο pipeline για την επεξεργασία σύνθετων PDF και τη μετατροπή τους σε έτοιμα
-                            προς χρήση σύνολα δεδομένων για εκπαίδευση Γλωσσικών Μοντέλων.
+                            Αγωγός για την επεξεργασία κειμένων και τη μετατροπή τους σε έτοιμα προς χρήση σύνολα
+                            δεδομένων για εκπαίδευση Μεγάλων Γλωσσικών Μοντέλων.
                         </p>
                     </div>
 
@@ -1639,7 +1612,7 @@
                                     συνεισφέροντες.
                                 </p>
                                 <div class="flex justify-center">
-                                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdi_LDFYHyWa03c5TBGafKD5OBi-8-hyxRdrcm_S-tK0rglEA/viewform?usp=header" target="_blank"
+                                    <a href="https://blog.glossapi.gr/en/contibute-to-glossapi/" target="_blank"
                                         class="relative inline-flex overflow-hidden rounded-full p-[6px] group">
                                         <span
                                             class="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#000000_0%,#c084fc_50%,#000000_100%)]"></span>
@@ -3711,11 +3684,13 @@
         const translations = {
             en: {
                 home: "Home",
+                about: "About Us",
                 blog: "Blog",
                 new: "New",
                 hero: {
                     initiative: "AN INITIATIVE BY",
-                    desc: "The definitive pipeline for processing complex PDF layouts and converting them into ready-to-use datasets for Large Language Model training.",
+                    slogan: "AI ready data",
+                    desc: "Pipeline for processing Greek texts and converting them into ready-to-use datasets for Large Language Models.",
                     join: "Join Community",
                     datasets: "View Datasets",
                     source: "View Source"
@@ -3756,11 +3731,13 @@
             },
             el: {
                 home: "Αρχικη",
+                about: "Σχετικά",
                 blog: "Blog",
                 new: "Νεο",
                 hero: {
                     initiative: "ΜΙΑ ΔΡΑΣΗ ΑΠΟ",
-                    desc: "Το ολοκληρωμένο pipeline για την επεξεργασία σύνθετων PDF και τη μετατροπή τους σε έτοιμα προς χρήση σύνολα δεδομένων για εκπαίδευση Γλωσσικών Μοντέλων.",
+                    slogan: "Δεδομένα για την ΤΝ",
+                    desc: "Αγωγός για την επεξεργασία κειμένων και τη μετατροπή τους σε έτοιμα προς χρήση σύνολα δεδομένων για εκπαίδευση Μεγάλων Γλωσσικών Μοντέλων.",
                     join: "Γίνετε Μέλος",
                     datasets: "Δείτε τα Δεδομένα",
                     source: "Δείτε τον Κώδικα"
@@ -3879,7 +3856,7 @@
             if (navBlog) navBlog.textContent = t.blog;
 
             const navAbout = document.getElementById('nav-about');
-            if (navAbout) navAbout.textContent = "About Us"; // Or localized if I add it to translations (it wasn't in list?)
+            if (navAbout) navAbout.textContent = t.about;
             // Translations object (Step 333) has 'home', 'blog', 'new'. Not 'about'.
             // I should probably add 'about' to translations if I can, but I can't edit the const translations easily without replacing HUGE block.
             // For now, I will just leave About Text alone or assume it's English/Greek static? 
@@ -3912,6 +3889,9 @@
             // Update Hero Section
             const heroInitiative = document.getElementById('hero-initiative');
             if (heroInitiative) heroInitiative.textContent = t.hero.initiative;
+
+            const heroSlogan = document.getElementById('hero-slogan');
+            if (heroSlogan) heroSlogan.textContent = t.hero.slogan;
 
             const heroDesc = document.getElementById('hero-desc');
             if (heroDesc) heroDesc.textContent = t.hero.desc;

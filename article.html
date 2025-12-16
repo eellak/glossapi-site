@@ -558,7 +558,7 @@
             try {
                 // WordPress API: fetch by slug with category filtering for language
                 const categoryIds = LANG_CATEGORIES[currentLang].join(',');
-                const apiUrl = `${WP_API_BASE}/posts?_embed&slug=${encodeURIComponent(slug)}&categories=${categoryIds}&orderby=date`;
+                const apiUrl = `${WP_API_BASE}/posts?_embed&slug=${encodeURIComponent(slug)}&categories=${categoryIds}&orderby=date&t=${new Date().getTime()}`;
 
                 const response = await fetch(apiUrl);
 
@@ -746,7 +746,7 @@
             try {
                 // Query articles in the target language
                 const targetCategories = LANG_CATEGORIES[lang].join(',');
-                const apiUrl = `${WP_API_BASE}/posts?_embed&per_page=50&categories=${targetCategories}`;
+                const apiUrl = `${WP_API_BASE}/posts?_embed&per_page=50&categories=${targetCategories}&t=${new Date().getTime()}`;
                 const response = await fetch(apiUrl);
 
                 if (!response.ok) throw new Error('Failed to fetch');
