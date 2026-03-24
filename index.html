@@ -1076,6 +1076,26 @@
                                     τον Κώδικα</span>
                             </div>
                         </a>
+
+                        <!-- Sources Button -->
+                        <a href="#" target="_blank"
+                            class="glass-box social-btn rounded-full border border-white/5 group hover:border-white/50 transition-colors duration-300 relative overflow-hidden p-[1px]"
+                            style="--shine-color: rgba(255, 255, 255, 0.5); --shine-size: 600px;">
+                            <div
+                                class="bg-[#0d0814]/60 group-hover:bg-[#0f0b16] rounded-full relative overflow-hidden flex items-center z-10 h-full w-full transition-colors duration-300 px-[2.5vh] py-[1vh] gap-[1vh]">
+                                <div class="relative flex items-center justify-center h-[2vh]">
+                                    <img src="assets/gfoss_white.svg"
+                                        class="h-full w-auto transition-opacity duration-300 opacity-60 group-hover:opacity-0"
+                                        alt="GFOSS">
+                                    <img src="assets/gfoss.svg"
+                                        class="absolute inset-0 h-full w-auto transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                                        alt="GFOSS">
+                                </div>
+                                <span id="hero-sources"
+                                    class="text-gray-400 group-hover:text-white transition-colors duration-300 font-medium text-[1.5vh]">Δείτε
+                                    τις Πηγές</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
@@ -2146,6 +2166,15 @@
                     <div style="width: 18px; height: 18px;">
                         <img src="assets/github.svg"
                             class="w-full h-full opacity-60 hover:opacity-100 transition-opacity" alt="GitHub">
+                    </div>
+                </a>
+                <a href="#" target="_blank"
+                    class="text-gray-400 transition-colors group block" style="height: 18px;">
+                    <div class="relative h-full">
+                        <img src="assets/gfoss_white.svg"
+                            class="h-full w-auto opacity-60 transition-opacity group-hover:opacity-0" alt="GFOSS">
+                        <img src="assets/gfoss.svg"
+                            class="absolute inset-0 h-full w-auto opacity-0 transition-opacity group-hover:opacity-100" alt="GFOSS">
                     </div>
                 </a>
             </div>
@@ -3764,7 +3793,8 @@
                     desc: "Pipeline for processing Greek texts and converting them into ready-to-use datasets for Large Language Models.",
                     join: "Join Community",
                     datasets: "View Datasets",
-                    source: "View Source"
+                    source: "View Code",
+                    sources: "View Source"
                 },
                 process: {
                     step1: { title: "1. Ingestion", desc: "Downloading of source documents from URLs or feeding of local files (PDF, DOCX, HTML) into the pipeline to initiate the processing sequence." },
@@ -3811,7 +3841,8 @@
                     desc: "Αγωγός για την επεξεργασία κειμένων και τη μετατροπή τους σε έτοιμα προς χρήση σύνολα δεδομένων για εκπαίδευση Μεγάλων Γλωσσικών Μοντέλων.",
                     join: "Γίνετε Μέλος",
                     datasets: "Δείτε τα Δεδομένα",
-                    source: "Δείτε τον Κώδικα"
+                    source: "Δείτε τον Κώδικα",
+                    sources: "Δείτε τις Πηγές"
                 },
                 process: {
                     step1: { title: "1. Εισαγωγή", desc: "Λήψη εγγράφων πηγής από URL ή τροφοδοσία τοπικών αρχείων (PDF, DOCX, HTML) στο pipeline για την έναρξη της επεξεργασίας." },
@@ -3975,6 +4006,9 @@
 
             const heroSource = document.getElementById('hero-source');
             if (heroSource) heroSource.textContent = t.hero.source;
+
+            const heroSources = document.getElementById('hero-sources');
+            if (heroSources) heroSources.textContent = t.hero.sources;
 
             // Update 3D Labels
             if (window.update3DLabels) {
